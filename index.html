@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      body {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        row-gap: 30px;
+      }
+      button {
+        background-color: tomato;
+        color: white;
+        padding-block: 10px;
+        padding-inline: 25px;
+        font-size: 24px;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      button:hover {
+        background-color: #ffc107;
+      }
+      button:active {
+        transform: scale(0.95);
+      }
+    </style>
+  </head>
+  <body>
+    <button id="updateProducts">UPDATE PRODUCTS</button>
+    <button id="updateAddtInfo">UPDATE ADDITIONAL INFO</button>
+    <button id="updateCategories">UPDATE CATEGORIES</button>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io();
+
+      socket.on("update", (msg) => {
+        console.log(msg);
+      });
+      const wholesaler = {
+        _id: "62a7e3580b6a058a85b599d3",
+        name: "SolutionBox",
+        user: "listasmariano@speedy.com.ar",
+        password: "dari1971",
+        homePageUrl: "https://www.solutionbox.com.ar/",
+        categories: getCategories().splice(0, 1),
+        productsPageUrl: "https://www.solutionbox.com.ar/buscar-libre",
+        products: [],
+        __v: 0,
+        image:
+          "https://firebasestorage.googleapis.com/v0/b/cucumber-d558d.appspot.com/o/wholesalers%2F62a7e3580b6a058a85b599d3%2Fd8627f7d-6038-412c-a4c8-121e75067933?alt=media&token=98cae5af-8aa6-4253-b0cc-25a49eec2c3f",
+      };
+
+      function updateAdditionalInfo() {
+        socket.emit("set-wholesaler-products-additional-info", {
+          wholesaler,
+        });
+        socket.on("set-wholesaler-products-additional-info:updating", (msg) => {
+          console.log(msg);
+        });
+        socket.on("set-wholesaler-products-additional-info:ended", (msg) => {
+          console.log(msg);
+        });
+      }
+      function updateWhoesalerProducts() {
+        console.log("updateWhoesalerProducts");
+        socket.emit("update-wholesaler-products", { wholesaler });
+        socket.on("update-wholesaler-products:updating", (msg) => {
+          console.log(msg);
+        });
+        socket.on("update-wholesaler-products:ended", (msg) => {
+          console.log(msg);
+        });
+      }
+      function updateWholesalerCategories() {
+        socket.emit("update-wholesaler-categories", { wholesaler });
+        socket.on("updating-wholesaler-categories:updating", (msg) => {
+          console.log(msg);
+        });
+      }
+
+      updateProducts.addEventListener("click", updateWhoesalerProducts);
+      updateAddtInfo.addEventListener("click", updateAdditionalInfo);
+      updateCategories.addEventListener("click", updateWholesalerCategories);
+
+      function getCategories() {
+        return [
+          {
+            name: "ACCESORIOS - PERIFERICOS - MEMORIAS",
+            url: "https://www.solutionbox.com.ar/buscar?categoria=T04",
+            childs: [
+              {
+                url: "https://www.solutionbox.com.ar/buscar?categoria=M49",
+                name: "MEMORIAS",
+              },
+              {
+                name: "ACCESORIOS",
+                url: "https://www.solutionbox.com.ar/buscar?categoria=ACC",
+                childs: [
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=C64",
+                    name: "CABLES Y AUXILIARES DE AUDIO",
+                  },
+                ],
+              },
+              {
+                name: "PERIFERICOS",
+                url: "https://www.solutionbox.com.ar/buscar?categoria=T14",
+                childs: [
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=T23",
+                    name: "MOUSE",
+                  },
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=T24",
+                    name: "TECLADOS",
+                  },
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=T27",
+                    name: "HEADSET",
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            url: "https://www.solutionbox.com.ar/buscar?categoria=CEL",
+            name: "CELULARES-CAMARAS DIGITALES Y DE ACCION",
+          },
+          {
+            url: "https://www.solutionbox.com.ar/buscar?categoria=ELC",
+            name: "ELECTRODOMESTICOS",
+          },
+          {
+            url: "https://www.solutionbox.com.ar/buscar?categoria=T07",
+            name: "RELOJES Y OUTDOOR",
+          },
+          {
+            name: "IMPRESIÓN Y SCANNERS",
+            url: "https://www.solutionbox.com.ar/buscar?categoria=IYD",
+            childs: [
+              {
+                url: "https://www.solutionbox.com.ar/buscar?categoria=IN2",
+                name: "INSUMOS",
+              },
+              {
+                name: "IMPRESIÓN",
+                url: "https://www.solutionbox.com.ar/buscar?categoria=MYD",
+                childs: [
+                  {
+                    name: "INKJET",
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=Y06",
+                    childs: [
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=Y05",
+                        name: "CONSUMER",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=Y10",
+                        name: "PRINTER",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=Y11",
+                        name: "MULTIFUNCIÓN",
+                      },
+                    ],
+                  },
+                  {
+                    name: "LASER",
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=Y07",
+                    childs: [
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=Y13",
+                        name: "IMPRESORA COLOR",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=Y14",
+                        name: "IMPRESORA MONOCROMÁTICA",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=Y15",
+                        name: "MULTIFUNCIÓN COLOR",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=Y16",
+                        name: "MULTIFUNCIÓN MONOCROMÁTICA",
+                      },
+                    ],
+                  },
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=Y08",
+                    name: "PLOTTER - GRAN FORMATO",
+                  },
+                ],
+              },
+              {
+                name: "SCANNER",
+                url: "https://www.solutionbox.com.ar/buscar?categoria=SYD",
+                childs: [
+                  {
+                    name: "DIGITALIZACIÓN - DOCUMENTOS",
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=J90",
+                    childs: [
+                      {
+                        name: "CAMA PLANA",
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=Y01",
+                        childs: [
+                          {
+                            url: "https://www.solutionbox.com.ar/buscar?categoria=Y02",
+                            name: "CON ALIMENTADOR",
+                          },
+                        ],
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=Y04",
+                        name: "ACCESORIOS",
+                      },
+                    ],
+                  },
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=GYD",
+                    name: "GRAFICO",
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            name: "INFRAESTRUCTURA",
+            url: "https://www.solutionbox.com.ar/buscar?categoria=IN1",
+            childs: [
+              {
+                name: "CABLEADO ESTRUCTURADO",
+                url: "https://www.solutionbox.com.ar/buscar?categoria=I01",
+                childs: [
+                  {
+                    name: "CATEGORIA 5E",
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=I05",
+                    childs: [
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=I16",
+                        name: "BOBINA",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=I17",
+                        name: "PATCHCORD",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=I18",
+                        name: "JACK",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=I19",
+                        name: "ROSETTA",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=I20",
+                        name: "PLUG",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=I21",
+                        name: "PATCHPANEL",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=I73",
+                        name: "FACE PLATE",
+                      },
+                    ],
+                  },
+                  {
+                    name: "CATEGORIA 6",
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=I06",
+                    childs: [
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=I22",
+                        name: "BOBINA",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=I23",
+                        name: "PATCHCORD",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=I24",
+                        name: "JACK",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=I27",
+                        name: "PATCHPANEL",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=I74",
+                        name: "FACE PLATE",
+                      },
+                    ],
+                  },
+                  {
+                    name: "CATEGORIA 6A",
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=I07",
+                    childs: [
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=I28",
+                        name: "BOBINA",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=I29",
+                        name: "PATCHCORD",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=I30",
+                        name: "JACK",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=I75",
+                        name: "FACE PLATE",
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                name: "FIBRA ÓPTICA",
+                url: "https://www.solutionbox.com.ar/buscar?categoria=I02",
+                childs: [
+                  {
+                    name: "MULTIMODO",
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=I08",
+                    childs: [
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=I36",
+                        name: "12 HILOS",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=I37",
+                        name: "PATCHCORD",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=I38",
+                        name: "PIGTAIL",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=I39",
+                        name: "BANDEJA FO",
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                name: "RACK",
+                url: "https://www.solutionbox.com.ar/buscar?categoria=I03",
+                childs: [
+                  {
+                    name: "MURALES",
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=I10",
+                    childs: [
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=I46",
+                        name: "COMPACTOS",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=I47",
+                        name: "PIVOTANTES",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=I48",
+                        name: "DESLIZANTES",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=I49",
+                        name: "IP 2 CUERPOS",
+                      },
+                    ],
+                  },
+                  {
+                    name: "RACKS",
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=I11",
+                    childs: [
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=I50",
+                        name: "EVO 2",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=I51",
+                        name: "EVO 3",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=I52",
+                        name: "EVO 4",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=I72",
+                        name: "RACKS ABIERTOS",
+                      },
+                    ],
+                  },
+                  {
+                    name: "ACCESORIOS",
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=I12",
+                    childs: [
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=I54",
+                        name: "CANAL DE TENSIÓN",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=I55",
+                        name: "PERISCOPIOS",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=I56",
+                        name: "VENTILACIÓN E ILUMINACIÓN",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=I57",
+                        name: "BANDEJA",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=I58",
+                        name: "ESTANTE",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=I71",
+                        name: "ORGANIZADOR",
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                name: "UPS",
+                url: "https://www.solutionbox.com.ar/buscar?categoria=I04",
+                childs: [
+                  {
+                    name: "INTERACTIVA",
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=I14",
+                    childs: [
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=I60",
+                        name: "LINEA BX",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=I61",
+                        name: "LINEA BR",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=I63",
+                        name: "LINEA SUA",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=I64",
+                        name: "LINEA SUA RM",
+                      },
+                    ],
+                  },
+                  {
+                    name: "ON LINE",
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=I15",
+                    childs: [
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=I66",
+                        name: "LINEA SURT",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=I67",
+                        name: "LINEA SRC",
+                      },
+                    ],
+                  },
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=I70",
+                    name: "ACCESORIOS",
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            name: "LICENCIAS DE SOFTWARE",
+            url: "https://www.solutionbox.com.ar/buscar?categoria=LIC",
+            childs: [
+              {
+                url: "https://www.solutionbox.com.ar/buscar?categoria=LI3",
+                name: "WINDOWS PRO",
+              },
+            ],
+          },
+          {
+            name: "MONITORES - CART. DIGITAL - PROYECTORES",
+            url: "https://www.solutionbox.com.ar/buscar?categoria=MTC",
+            childs: [
+              {
+                name: "MONITORES",
+                url: "https://www.solutionbox.com.ar/buscar?categoria=P03",
+                childs: [
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=P09",
+                    name: "LED HD",
+                  },
+                ],
+              },
+              {
+                name: "CARTELERÍA DIGITAL",
+                url: "https://www.solutionbox.com.ar/buscar?categoria=CAT",
+                childs: [
+                  {
+                    name: "MONITORES LED",
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=CML",
+                    childs: [
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=C18",
+                        name: '40"',
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                url: "https://www.solutionbox.com.ar/buscar?categoria=T39",
+                name: "PROYECTORES",
+              },
+            ],
+          },
+          {
+            name: "NETWORKING",
+            url: "https://www.solutionbox.com.ar/buscar?categoria=NTW",
+            childs: [
+              {
+                name: "FTTX",
+                url: "https://www.solutionbox.com.ar/buscar?categoria=FTT",
+                childs: [
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=OLT",
+                    name: "OLT FTTX",
+                  },
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=ONT",
+                    name: "ONT FTTX",
+                  },
+                ],
+              },
+              {
+                name: "ROUTER",
+                url: "https://www.solutionbox.com.ar/buscar?categoria=ROU",
+                childs: [
+                  {
+                    name: "CORPORATIVOS",
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=ROE",
+                    childs: [
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=J06",
+                        name: "MODULARES",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=J07",
+                        name: "NO MODULARES",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=J08",
+                        name: "OPCIONALES",
+                      },
+                    ],
+                  },
+                  {
+                    name: "HOGAREÑOS",
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=ROH",
+                    childs: [
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=J05",
+                        name: "ROUTER ETHERNET",
+                      },
+                      {
+                        name: "ROUTER WIFI",
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=SW6",
+                        childs: [
+                          {
+                            url: "https://www.solutionbox.com.ar/buscar?categoria=W16",
+                            name: "MÁS DE 300 MBPS",
+                          },
+                          {
+                            url: "https://www.solutionbox.com.ar/buscar?categoria=W17",
+                            name: "300 MBPS",
+                          },
+                          {
+                            url: "https://www.solutionbox.com.ar/buscar?categoria=W18",
+                            name: "150 MBPS",
+                          },
+                        ],
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=SW7",
+                        name: "MODEM - ROUTER",
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                name: "SWITCHES",
+                url: "https://www.solutionbox.com.ar/buscar?categoria=SWT",
+                childs: [
+                  {
+                    name: "SWITCH SIN ADMINISTRACIÓN",
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=STN",
+                    childs: [
+                      {
+                        name: "SWITCH LAYER 2",
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=SZ3",
+                        childs: [
+                          {
+                            name: "CON POE",
+                            url: "https://www.solutionbox.com.ar/buscar?categoria=Z05",
+                            childs: [
+                              {
+                                url: "https://www.solutionbox.com.ar/buscar?categoria=Z30",
+                                name: "8 PUERTOS",
+                              },
+                            ],
+                          },
+                          {
+                            name: "SIN POE",
+                            url: "https://www.solutionbox.com.ar/buscar?categoria=Z06",
+                            childs: [
+                              {
+                                url: "https://www.solutionbox.com.ar/buscar?categoria=Z31",
+                                name: "48 PUERTOS",
+                              },
+                              {
+                                url: "https://www.solutionbox.com.ar/buscar?categoria=Z32",
+                                name: "24 PUERTOS",
+                              },
+                              {
+                                url: "https://www.solutionbox.com.ar/buscar?categoria=Z33",
+                                name: "16 PUERTOS",
+                              },
+                              {
+                                url: "https://www.solutionbox.com.ar/buscar?categoria=Z34",
+                                name: "8 PUERTOS",
+                              },
+                              {
+                                url: "https://www.solutionbox.com.ar/buscar?categoria=Z47",
+                                name: "5 PUERTOS",
+                              },
+                            ],
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                  {
+                    name: "ADMINISTRABLES",
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=SWA",
+                    childs: [
+                      {
+                        name: "SWITCH LAYER 3",
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=SL3",
+                        childs: [
+                          {
+                            name: "CON POE",
+                            url: "https://www.solutionbox.com.ar/buscar?categoria=S3P",
+                            childs: [
+                              {
+                                url: "https://www.solutionbox.com.ar/buscar?categoria=S24",
+                                name: "24 PUERTOS",
+                              },
+                              {
+                                url: "https://www.solutionbox.com.ar/buscar?categoria=S48",
+                                name: "48 PUERTOS",
+                              },
+                            ],
+                          },
+                          {
+                            name: "SIN POE",
+                            url: "https://www.solutionbox.com.ar/buscar?categoria=S3W",
+                            childs: [
+                              {
+                                url: "https://www.solutionbox.com.ar/buscar?categoria=24P",
+                                name: "24 PUERTOS",
+                              },
+                              {
+                                url: "https://www.solutionbox.com.ar/buscar?categoria=48P",
+                                name: "48 PUERTOS",
+                              },
+                            ],
+                          },
+                        ],
+                      },
+                      {
+                        name: "SWITCH LAYER 2",
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=SZ1",
+                        childs: [
+                          {
+                            name: "CON POE",
+                            url: "https://www.solutionbox.com.ar/buscar?categoria=Z01",
+                            childs: [
+                              {
+                                url: "https://www.solutionbox.com.ar/buscar?categoria=Z07",
+                                name: "48 PUERTOS",
+                              },
+                              {
+                                url: "https://www.solutionbox.com.ar/buscar?categoria=Z08",
+                                name: "24 PUERTOS",
+                              },
+                            ],
+                          },
+                          {
+                            name: "SIN POE",
+                            url: "https://www.solutionbox.com.ar/buscar?categoria=Z02",
+                            childs: [
+                              {
+                                url: "https://www.solutionbox.com.ar/buscar?categoria=Z09",
+                                name: "48 PUERTOS",
+                              },
+                              {
+                                url: "https://www.solutionbox.com.ar/buscar?categoria=Z10",
+                                name: "24 PUERTOS",
+                              },
+                            ],
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                  {
+                    name: "SWITCH WEB ADMINISTRABLE",
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=SWN",
+                    childs: [
+                      {
+                        name: "SWITCH LAYER 3",
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=L3W",
+                        childs: [
+                          {
+                            name: "CON POE",
+                            url: "https://www.solutionbox.com.ar/buscar?categoria=L3P",
+                            childs: [
+                              {
+                                url: "https://www.solutionbox.com.ar/buscar?categoria=Z11",
+                                name: "48 PUERTOS",
+                              },
+                              {
+                                url: "https://www.solutionbox.com.ar/buscar?categoria=Z12",
+                                name: "24 PUERTOS",
+                              },
+                              {
+                                url: "https://www.solutionbox.com.ar/buscar?categoria=Z26",
+                                name: "8 PUERTOS",
+                              },
+                            ],
+                          },
+                          {
+                            name: "SIN POE",
+                            url: "https://www.solutionbox.com.ar/buscar?categoria=L3S",
+                            childs: [
+                              {
+                                url: "https://www.solutionbox.com.ar/buscar?categoria=Z14",
+                                name: "48 PUERTOS",
+                              },
+                              {
+                                url: "https://www.solutionbox.com.ar/buscar?categoria=Z15",
+                                name: "24 PUERTOS",
+                              },
+                              {
+                                url: "https://www.solutionbox.com.ar/buscar?categoria=Z16",
+                                name: "16 PUERTOS",
+                              },
+                              {
+                                url: "https://www.solutionbox.com.ar/buscar?categoria=Z17",
+                                name: "8 PUERTOS",
+                              },
+                            ],
+                          },
+                        ],
+                      },
+                      {
+                        name: "SWITCH LAYER 2",
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=SZ2",
+                        childs: [
+                          {
+                            name: "CON POE",
+                            url: "https://www.solutionbox.com.ar/buscar?categoria=Z03",
+                            childs: [
+                              {
+                                url: "https://www.solutionbox.com.ar/buscar?categoria=Z18",
+                                name: "48 PUERTOS",
+                              },
+                              {
+                                url: "https://www.solutionbox.com.ar/buscar?categoria=Z19",
+                                name: "24 PUERTOS",
+                              },
+                            ],
+                          },
+                          {
+                            name: "SIN POE",
+                            url: "https://www.solutionbox.com.ar/buscar?categoria=Z04",
+                            childs: [
+                              {
+                                url: "https://www.solutionbox.com.ar/buscar?categoria=Z22",
+                                name: "48 PUERTOS",
+                              },
+                              {
+                                url: "https://www.solutionbox.com.ar/buscar?categoria=Z23",
+                                name: "24 PUERTOS",
+                              },
+                              {
+                                url: "https://www.solutionbox.com.ar/buscar?categoria=Z24",
+                                name: "16 PUERTOS",
+                              },
+                              {
+                                url: "https://www.solutionbox.com.ar/buscar?categoria=Z25",
+                                name: "8 PUERTOS",
+                              },
+                            ],
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                name: "OPCIONALES",
+                url: "https://www.solutionbox.com.ar/buscar?categoria=Z35",
+                childs: [
+                  {
+                    name: "MODULOS SFP",
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=MC1",
+                    childs: [
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=MC2",
+                        name: "MULTIMODO",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=MC3",
+                        name: "MONOMODO",
+                      },
+                    ],
+                  },
+                  {
+                    name: "TRANSCEIVERS",
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=Z37",
+                    childs: [
+                      {
+                        name: "SFP",
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=Z40",
+                        childs: [
+                          {
+                            url: "https://www.solutionbox.com.ar/buscar?categoria=Z43",
+                            name: "MONOMODO",
+                          },
+                          {
+                            url: "https://www.solutionbox.com.ar/buscar?categoria=Z44",
+                            name: "MULTIMODO",
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=Z39",
+                    name: "VARIOS - OTROS",
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            url: "https://www.solutionbox.com.ar/buscar?categoria=073",
+            name: "CABLEADO ESTRUCTURADO - ACCESORIOS",
+          },
+          {
+            name: "PC'S - NOTEBOOKS - TABLETS",
+            url: "https://www.solutionbox.com.ar/buscar?categoria=PCN",
+            childs: [
+              {
+                url: "https://www.solutionbox.com.ar/buscar?categoria=PCG",
+                name: "PC GAMING",
+              },
+              {
+                name: "NOTEBOOK",
+                url: "https://www.solutionbox.com.ar/buscar?categoria=P01",
+                childs: [
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=P04",
+                    name: "CORPORATIVAS",
+                  },
+                ],
+              },
+              {
+                name: "DESKTOP",
+                url: "https://www.solutionbox.com.ar/buscar?categoria=P02",
+                childs: [
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=P07",
+                    name: "PC DE ESCRITORIO",
+                  },
+                ],
+              },
+              {
+                url: "https://www.solutionbox.com.ar/buscar?categoria=P25",
+                name: "WORKSTATION",
+              },
+            ],
+          },
+          {
+            name: "SEGURIDAD",
+            url: "https://www.solutionbox.com.ar/buscar?categoria=SGD",
+            childs: [
+              {
+                name: "SEGURIDAD DE DATOS",
+                url: "https://www.solutionbox.com.ar/buscar?categoria=S01",
+                childs: [
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=S04",
+                    name: "FIREWALL ENTERPRISE",
+                  },
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=S05",
+                    name: "FIREWALL MEDIANAS EMPRESAS",
+                  },
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=S06",
+                    name: "FIREWALL PEQUEÑAS EMPRESAS",
+                  },
+                ],
+              },
+              {
+                name: "SEGURIDAD FÍSICA",
+                url: "https://www.solutionbox.com.ar/buscar?categoria=S02",
+                childs: [
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=SA8",
+                    name: "ACCESORIOS",
+                  },
+                  {
+                    name: "CÁMARAS IP EXTERIOR",
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=S07",
+                    childs: [
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=S13",
+                        name: "CÁMARAS FIJAS",
+                      },
+                    ],
+                  },
+                  {
+                    name: "CÁMARAS IP INTERIOR",
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=S08",
+                    childs: [
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=S21",
+                        name: "CÁMARAS FIJAS",
+                      },
+                    ],
+                  },
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=S74",
+                    name: "NVR - DVR",
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            name: "SERVER & STORAGE - CINTAS",
+            url: "https://www.solutionbox.com.ar/buscar?categoria=SST",
+            childs: [
+              {
+                name: "SERVIDORES",
+                url: "https://www.solutionbox.com.ar/buscar?categoria=E01",
+                childs: [
+                  {
+                    name: "TOWER",
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=E05",
+                    childs: [
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=E14",
+                        name: "1 SOCKET",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=E15",
+                        name: "2 O MÁS SOCKETS",
+                      },
+                    ],
+                  },
+                  {
+                    name: "RACKEABLE",
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=E06",
+                    childs: [
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=E17",
+                        name: "2 O MÁS SOCKETS",
+                      },
+                    ],
+                  },
+                  {
+                    name: "OPCIONALES",
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=E09",
+                    childs: [
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=E22",
+                        name: "PROCESADORES",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=E23",
+                        name: "MEMORIAS",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=E24",
+                        name: "DISCOS SAS",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=E25",
+                        name: "DISCOS SATA",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=E26",
+                        name: "CONTROLADORA RAID",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=E27",
+                        name: "FUENTE REDUNDANTE",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=E37",
+                        name: "VARIOS",
+                      },
+                    ],
+                  },
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=SRV",
+                    name: "SERVICIOS",
+                  },
+                ],
+              },
+              {
+                name: "STORAGE",
+                url: "https://www.solutionbox.com.ar/buscar?categoria=E02",
+                childs: [
+                  {
+                    name: "UNIDAD DE BACKUP DE CINTA",
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=E11",
+                    childs: [
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=E30",
+                        name: "MANUAL",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=E31",
+                        name: "AUTO-LOADER",
+                      },
+                    ],
+                  },
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=E38",
+                    name: "OPCIONALES",
+                  },
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=SVS",
+                    name: "SERVICIOS",
+                  },
+                ],
+              },
+              {
+                url: "https://www.solutionbox.com.ar/buscar?categoria=E03",
+                name: "CINTAS DE BACKUP LTO",
+              },
+            ],
+          },
+          {
+            name: "SOLUCIONES WIRELESS",
+            url: "https://www.solutionbox.com.ar/buscar?categoria=SW1",
+            childs: [
+              {
+                name: "HOGAREÑAS",
+                url: "https://www.solutionbox.com.ar/buscar?categoria=SW2",
+                childs: [
+                  {
+                    name: "PLACA DE RED",
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=SW4",
+                    childs: [
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=W01",
+                        name: "PCI",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=W02",
+                        name: "USB",
+                      },
+                    ],
+                  },
+                  {
+                    name: "ACCESS POINT",
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=SW5",
+                    childs: [
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=W04",
+                        name: "300 MBPS",
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                name: "CORPORATIVOS",
+                url: "https://www.solutionbox.com.ar/buscar?categoria=SW3",
+                childs: [
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=AZE",
+                    name: "ACCESORIOS",
+                  },
+                  {
+                    name: "ACCESS POINT OUTDOOR",
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=S10",
+                    childs: [
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=W10",
+                        name: "2.4 GHZ.",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=W11",
+                        name: "5.8 GHZ.",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=W12",
+                        name: "OTROS",
+                      },
+                    ],
+                  },
+                  {
+                    name: "ANTENAS",
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=S11",
+                    childs: [
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=W13",
+                        name: "PANELES",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=W14",
+                        name: "OMNIDIRECCIONAL",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=W15",
+                        name: "DIRECCIONALES",
+                      },
+                    ],
+                  },
+                  {
+                    name: "ACCESS POINT INDOOR",
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=SW9",
+                    childs: [
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=W07",
+                        name: "300 MBPS",
+                      },
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=W08",
+                        name: "150 MBPS",
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            name: "TELEFONÍA",
+            url: "https://www.solutionbox.com.ar/buscar?categoria=TL1",
+            childs: [
+              {
+                name: "SOLUCIONES EMPRESARIALES",
+                url: "https://www.solutionbox.com.ar/buscar?categoria=L01",
+                childs: [
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=HED",
+                    name: "HEADSET",
+                  },
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=L05",
+                    name: "CENTRALES TELEFÓNICAS IP",
+                  },
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=L06",
+                    name: "CENTRALES TELEFÓNICAS ANALÓGICAS",
+                  },
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=L08",
+                    name: "TELÉFONOS IP",
+                  },
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=L09",
+                    name: "TELÉFONOS PROPIETARIOS",
+                  },
+                ],
+              },
+              {
+                name: "SOLUCIONES HOGAREÑAS",
+                url: "https://www.solutionbox.com.ar/buscar?categoria=L02",
+                childs: [
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=L14",
+                    name: "TELÉFONOS ANALÓGICOS",
+                  },
+                ],
+              },
+              {
+                url: "https://www.solutionbox.com.ar/buscar?categoria=L03",
+                name: "GATEWAYS",
+              },
+              {
+                url: "https://www.solutionbox.com.ar/buscar?categoria=L04",
+                name: "VIDEO CONFERENCIAS",
+              },
+            ],
+          },
+          {
+            name: "TV - AUDIO - CONSOLAS - ACCESORIOS",
+            url: "https://www.solutionbox.com.ar/buscar?categoria=TAC",
+            childs: [
+              {
+                name: "TV",
+                url: "https://www.solutionbox.com.ar/buscar?categoria=T01",
+                childs: [
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=T22",
+                    name: "LED HD",
+                  },
+                  {
+                    name: "LED FULL HD SMART TV 3D Y UHD",
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=T67",
+                    childs: [
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=T70",
+                        name: '46"  A 60"',
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                name: "AUDIO",
+                url: "https://www.solutionbox.com.ar/buscar?categoria=T03",
+                childs: [
+                  {
+                    name: "AUDIO CAR",
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=J01",
+                    childs: [
+                      {
+                        url: "https://www.solutionbox.com.ar/buscar?categoria=J03",
+                        name: "PARLANTES",
+                      },
+                    ],
+                  },
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=T61",
+                    name: "AURICULARES",
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            name: "ENERGIA RENOVABLE",
+            url: "https://www.solutionbox.com.ar/buscar?categoria=ERR",
+            childs: [
+              {
+                url: "https://www.solutionbox.com.ar/buscar?categoria=ER1",
+                name: "PANELES SOLARES",
+              },
+              {
+                name: "INVERSORES",
+                url: "https://www.solutionbox.com.ar/buscar?categoria=ER2",
+                childs: [
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=ER4",
+                    name: "GRID TIE",
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            name: "PRODUCTOS OEM",
+            url: "https://www.solutionbox.com.ar/buscar?categoria=088",
+            childs: [
+              {
+                name: "PERIFERICOS",
+                url: "https://www.solutionbox.com.ar/buscar?categoria=OE9",
+                childs: [
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=G28",
+                    name: "MOUSE",
+                  },
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=G29",
+                    name: "TECLADOS",
+                  },
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=G31",
+                    name: "MOUSEPAD",
+                  },
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=G32",
+                    name: "AURICULARES",
+                  },
+                ],
+              },
+              {
+                name: "REFRIGERACION",
+                url: "https://www.solutionbox.com.ar/buscar?categoria=OE8",
+                childs: [
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=G26",
+                    name: "WATERCOOLING",
+                  },
+                ],
+              },
+              {
+                url: "https://www.solutionbox.com.ar/buscar?categoria=OE6",
+                name: "FUENTES",
+              },
+              {
+                url: "https://www.solutionbox.com.ar/buscar?categoria=OE5",
+                name: "PLACAS DE VIDEO",
+              },
+              {
+                name: "ALMACENAMIENTO",
+                url: "https://www.solutionbox.com.ar/buscar?categoria=OE4",
+                childs: [
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=G17",
+                    name: "DISCO SOLIDO (SSD)",
+                  },
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=G18",
+                    name: "DISCO MECANICO (HDD)",
+                  },
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=G19",
+                    name: "EXTERNOS USB",
+                  },
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=G20",
+                    name: "MICRO SD",
+                  },
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=G21",
+                    name: "PENDRIVE",
+                  },
+                ],
+              },
+              {
+                name: "MEMORIAS RAM",
+                url: "https://www.solutionbox.com.ar/buscar?categoria=OE3",
+                childs: [
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=G15",
+                    name: "PARA PC (UDIMM)",
+                  },
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=G16",
+                    name: "PARA NOTEBOOK (SODIMM)",
+                  },
+                ],
+              },
+              {
+                name: "MOTHERBOARD",
+                url: "https://www.solutionbox.com.ar/buscar?categoria=OE2",
+                childs: [
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=G08",
+                    name: "AM4 MOTHER",
+                  },
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=G11",
+                    name: "LGA1151V2",
+                  },
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=G12",
+                    name: "LGA1200",
+                  },
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=G40",
+                    name: "LGA1700",
+                  },
+                ],
+              },
+              {
+                url: "https://www.solutionbox.com.ar/buscar?categoria=O10",
+                name: "SILLAS GAMER",
+              },
+              {
+                url: "https://www.solutionbox.com.ar/buscar?categoria=CBO",
+                name: "COMBOS OEM",
+              },
+              {
+                name: "PROCESADORES",
+                url: "https://www.solutionbox.com.ar/buscar?categoria=OE1",
+                childs: [
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=G01",
+                    name: "AM4 PROCESADORES",
+                  },
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=G04",
+                    name: "LGA1151V2",
+                  },
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=G05",
+                    name: "LGA1200",
+                  },
+                  {
+                    url: "https://www.solutionbox.com.ar/buscar?categoria=G39",
+                    name: "LGA1700 PROCESADORES",
+                  },
+                ],
+              },
+              {
+                url: "https://www.solutionbox.com.ar/buscar?categoria=044",
+                name: "MOTHERBOARDS Y ACCESORIOS",
+              },
+              {
+                url: "https://www.solutionbox.com.ar/buscar?categoria=042",
+                name: "GABINETES",
+              },
+            ],
+          },
+          {
+            url: "https://www.solutionbox.com.ar/buscar?categoria=080",
+            name: "PROTECCION ELECTRICA - UPS",
+          },
+          {
+            url: "https://www.solutionbox.com.ar/buscar?categoria=076",
+            name: "SWITCHES",
+          },
+          {
+            url: "https://www.solutionbox.com.ar/buscar?categoria=091",
+            name: "TELEFONIA",
+          },
+          {
+            url: "https://www.solutionbox.com.ar/buscar?categoria=099",
+            name: "OTROS",
+          },
+          {
+            url: "https://www.solutionbox.com.ar/buscar?categoria=VOZ",
+            name: "VOZ SOBRE IP-GATEWAYS",
+          },
+        ];
+      }
+    </script>
+  </body>
+</html>

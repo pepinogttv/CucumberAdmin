@@ -1,0 +1,92 @@
+{
+  "cookies": [
+    {
+      "sameSite": "Lax",
+      "name": "_ga",
+      "value": "GA1.3.656638313.1655351886",
+      "domain": ".solutionbox.com.ar",
+      "path": "/",
+      "expires": 1718423885,
+      "httpOnly": false,
+      "secure": false
+    },
+    {
+      "sameSite": "Lax",
+      "name": "_gid",
+      "value": "GA1.3.321799741.1655351886",
+      "domain": ".solutionbox.com.ar",
+      "path": "/",
+      "expires": 1655438285,
+      "httpOnly": false,
+      "secure": false
+    },
+    {
+      "sameSite": "Lax",
+      "name": "_gat",
+      "value": "1",
+      "domain": ".solutionbox.com.ar",
+      "path": "/",
+      "expires": 1655351945,
+      "httpOnly": false,
+      "secure": false
+    },
+    {
+      "sameSite": "None",
+      "name": "YSC",
+      "value": "ovg4bo1EjIQ",
+      "domain": ".youtube.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true
+    },
+    {
+      "sameSite": "None",
+      "name": "VISITOR_INFO1_LIVE",
+      "value": "kzZcO2o9XAQ",
+      "domain": ".youtube.com",
+      "path": "/",
+      "expires": 1670903885.833583,
+      "httpOnly": true,
+      "secure": true
+    },
+    {
+      "sameSite": "Lax",
+      "name": "PHPSESSID",
+      "value": "kqdr9t4vq9esgskonqe1l373j3",
+      "domain": "www.solutionbox.com.ar",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": false
+    }
+  ],
+  "origins": [
+    {
+      "origin": "https://www.youtube.com",
+      "localStorage": [
+        {
+          "name": "yt-remote-device-id",
+          "value": "{\"data\":\"24ebdf9f-0564-4744-9ff9-f6fedbe88282\",\"expiration\":1686887887357,\"creation\":1655351887358}"
+        },
+        {
+          "name": "yt-remote-connected-devices",
+          "value": "{\"data\":\"[]\",\"expiration\":1655438287670,\"creation\":1655351887670}"
+        },
+        {
+          "name": "ytidb::LAST_RESULT_ENTRY_KEY",
+          "value": "{\"data\":{\"hasSucceededOnce\":true},\"expiration\":1657943889367,\"creation\":1655351889367}"
+        }
+      ]
+    },
+    {
+      "origin": "https://www.instagram.com",
+      "localStorage": [
+        {
+          "name": "pigeon_state",
+          "value": "{\"lastDeviceInfoTime\":1655351899960}"
+        }
+      ]
+    }
+  ]
+}
