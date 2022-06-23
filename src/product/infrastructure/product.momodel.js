@@ -18,5 +18,4 @@ const ProductSchema = Schema({
     ytVideos: Array,
 
 });
-
 export const ProductModel = mongoose.model('Product', ProductSchema);

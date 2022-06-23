@@ -2,7 +2,7 @@ import makeExpressCallback from "../../shared/infrastructure/makeExpressCallback
 import { ProductController } from "./ProductController.js";
 
 import multer from "multer";
-import { reduceImageQuality } from "../../shared/infrastructure/middlewares/reduceImageQuality.js"
+import { reduceImageQuality } from "../../shared/infrastructure/middleware/reduceImageQuality.js"
 const upload = multer({ storage: multer.memoryStorage() });
 
 export const register = (router) => {
