@@ -11,29 +11,27 @@ import { repositoryFactory } from "./repositories/factory.js"
 import { sharedRepositoryFactory } from "../../shared/infrastructure/repositories/factory.js"
 
 const brandRepository = repositoryFactory('brandRepository')
-const storageRepositroy = sharedRepositoryFactory("storageRepository");
+const storageRepository = sharedRepositoryFactory("storageRepository");
 
 export const BrandController = Object.freeze({
     create: ({ body, file }) => makeUseCase(
         createBrand,
-        brandRepository,
-        storageRepositroy
+        { brandRepository, storageRepository }
     )(body, file),
     update: ({ body, file }) => makeUseCase(
         updateBrand,
-        brandRepository,
-        storageRepositroy
+        { brandRepository, storageRepository }
     )(body, file),
+    deleteOne: ({ params }) => makeUseCase(
+        deleteBrand,
+        { brandRepository, storageRepository }
+    )(params.id),
     getAll: () => makeUseCase(
         getBrands,
-        brandRepository
+        { brandRepository }
     )(),
     getOne: ({ params }) => makeUseCase(
         getBrand,
-        brandRepository
-    )(params.id),
-    deleteOne: ({ params }) => makeUseCase(
-        deleteBrand,
-        brandRepository
+        { brandRepository }
     )(params.id),
 })

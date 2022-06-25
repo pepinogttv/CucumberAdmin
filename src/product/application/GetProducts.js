@@ -1,5 +1,5 @@
-export function getProducts(dbRepository) {
+export function getProducts({ productRepository }) {
     return async function () {
-        return dbRepository.getAll()
+        return productRepository.getAll()
     }
 }

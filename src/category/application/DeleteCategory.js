@@ -1,4 +1,4 @@
-export function deleteCategory(categoryRepository, productRepository) {
+export function deleteCategory({ categoryRepository, productRepository }) {
     return async (id) => {
 
         const products = await productRepository.getAllByCategoryId(id);

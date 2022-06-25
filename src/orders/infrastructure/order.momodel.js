@@ -6,7 +6,7 @@ const orderSchema = Schema({
     user_id: { type: String, required: true },
     total: Number,
     mercadopago_reference_id: String,
-    comprobante_De_transferencia: String,
+    comprobante: String,
     status: {
         type: String, required: true, enum: [
             'in-cart', //Un usuario no puede tener mas de una orden en el carrito

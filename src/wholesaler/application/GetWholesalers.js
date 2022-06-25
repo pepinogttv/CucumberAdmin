@@ -1,4 +1,4 @@
-export function getWholesalers(wholesalerRepository) {
+export function getWholesalers({ wholesalerRepository }) {
     return async function () {
         return wholesalerRepository.getAll()
     }

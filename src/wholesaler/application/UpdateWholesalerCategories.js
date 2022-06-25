@@ -1,7 +1,7 @@
-export function updateWholesalerCategories(wholesalerRepositroy, wholesalerCategoriesGetterRepository) {
+export function updateWholesalerCategories({ wholesalerRepository, wholesalerCategoriesGetterRepository }) {
     return async (wholesaler, endCallback) => {
         const categories = await wholesalerCategoriesGetterRepository.getCategories(wholesaler);
-        const res = wholesalerRepositroy.updateCategories(wholesaler._id, categories);
+        const res = wholesalerRepository.updateCategories(wholesaler._id, categories);
         endCallback(categories)
         return res;
     }

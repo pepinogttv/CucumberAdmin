@@ -1,7 +1,7 @@
 
 import { Wholesaler } from '../domain/WholesalerEntity.js';
 
-export function createWholesaler(wholesalerRepository, storageRepository) {
+export function createWholesaler({ wholesalerRepository, storageRepository }) {
     return async function (wholesalerData, file) {
 
         const wholesaler = Wholesaler(wholesalerData);

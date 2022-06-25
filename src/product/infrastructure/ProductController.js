@@ -13,35 +13,29 @@ import { repositoryFactory } from "./repositories/factory.js";
 import { sharedRepositoryFactory } from "../../shared/infrastructure/repositories/factory.js"
 
 const productRepository = repositoryFactory("productRepository");
-const storageRepositroy = sharedRepositoryFactory("storageRepository");
+const storageRepository = sharedRepositoryFactory("storageRepository");
 const dollarRepository = sharedRepositoryFactory("dollarRepository");
 
 export const ProductController = Object.freeze({
     create: ({ body: { product }, files }) => makeUseCase(
         createProduct,
-        productRepository,
-        storageRepositroy,
-        dollarRepository,
-        emitter
+        { productRepository, storageRepository, dollarRepository, emitter }
     )(product, files),
     update: ({ params, body: { product }, files }) => makeUseCase(
         updateProduct,
-        productRepository,
-        storageRepositroy,
-        dollarRepository
+        { productRepository, storageRepository, dollarRepository }
     )(params.id, product, files),
     getAll: () => makeUseCase(
         getProducts,
-        productRepository
+        { productRepository }
     )(),
     getOne: ({ params }) => makeUseCase(
         getProduct,
-        productRepository
+        { productRepository }
     )(params.id),
     deleteOne: ({ params }) => makeUseCase(
         deleteProduct,
-        productRepository,
-        storageRepositroy
+        { productRepository, storageRepository }
     )(params.id),
 
 })

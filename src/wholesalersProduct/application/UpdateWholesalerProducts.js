@@ -1,5 +1,5 @@
 import { WholesalerProduct } from "../domain/WholesalerProductEntity.js"
-export function updateWholesalerProducts(wholesalerProductRepository, wholesalerProductsGetterRepository, dollarRepository) {
+export function updateWholesalerProducts({ wholesalerProductRepository, wholesalerProductsGetterRepository, dollarRepository }) {
     return async (wholesaler, updateCallback, endCallback) => {
         const { categories } = wholesaler;
         const dollar = await dollarRepository.getOfficialDollar();

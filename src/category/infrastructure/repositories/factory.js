@@ -1,7 +1,7 @@
 import { mongoCategoryRepository } from "./MongoCategoryRepository.js"
 
-const repositores = {
+const repositories = {
     categoryRepository: mongoCategoryRepository,
 }
 
-export const repositoryFactory = (name) => repositores[name];
+export const repositoryFactory = (name) => repositories[name];

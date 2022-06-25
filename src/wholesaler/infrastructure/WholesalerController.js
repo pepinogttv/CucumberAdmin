@@ -17,30 +17,26 @@ const wholesalerCategoriesGetterRepository = repositoryFactory("wholesalerCatego
 export const WholesalerController = Object.freeze({
     create: ({ body: { wholesaler }, file }) => makeUseCase(
         createWholesaler,
-        wholesalerRepository,
-        storageRepository
+        { wholesalerRepository, storageRepository }
     )(wholesaler, file),
     update: ({ params, body: { wholesaler }, file }) => makeUseCase(
         updateWholesaler,
-        wholesalerRepository,
-        storageRepository
+        { wholesalerRepository, storageRepository }
     )(params.id, wholesaler, file),
     getAll: () => makeUseCase(
         getWholesalers,
-        wholesalerRepository
+        { wholesalerRepository }
     )(),
     getOne: ({ params }) => makeUseCase(
         getWholesaler,
-        wholesalerRepository,
+        { wholesalerRepository },
     )(params.id),
     deleteOne: ({ params }) => makeUseCase(
         deleteWholesaler,
-        wholesalerRepository,
-        storageRepository
+        { wholesalerRepository, storageRepository }
     )(params.id),
     updateWholesalerCategories: ({ wholesaler, endCallback }) => makeUseCase(
         updateWholesalerCategories,
-        wholesalerRepository,
-        wholesalerCategoriesGetterRepository,
+        { wholesalerRepository, wholesalerCategoriesGetterRepository }
     )(wholesaler, endCallback)
 })

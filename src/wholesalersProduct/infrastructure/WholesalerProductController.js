@@ -18,25 +18,22 @@ const dollarRepository = sharedRepositoryFactory("dollarRepository");
 export const WholesalerProductController = Object.freeze({
     update: ({ wholesaler, updateCallback, endCallback }) => makeUseCase(
         updateWholesalerProducts,
-        wholesalerProductRepository,
-        wholesalerProductsGetterRepository,
-        dollarRepository
+        { wholesalerProductRepository, wholesalerProductsGetterRepository, dollarRepository }
     )(wholesaler, updateCallback, endCallback),
     setAdditionalInfo: ({ wholesaler, updateCallback, endCallback }) => makeUseCase(
         setWholesalerProductsAdditionalInfo,
-        wholesalerProductRepository,
-        wholesalerProductsGetterRepository
+        { wholesalerProductRepository, wholesalerProductsGetterRepository }
     )(wholesaler, updateCallback, endCallback),
     getAll: () => makeUseCase(
         getWholesalerProducts,
-        wholesalerProductRepository
+        { wholesalerProductRepository }
     )(),
     getAllByWholesalerId: ({ params }) => makeUseCase(
         getWholesalerProductsFromOneWholesaler,
-        wholesalerProductRepository
+        { wholesalerProductRepository }
     )(params.wholesalerId),
     getOne: ({ params }) => makeUseCase(
         getWholesalerProduct,
-        wholesalerProductRepository
+        { wholesalerProductRepository }
     )(params.id),
 })

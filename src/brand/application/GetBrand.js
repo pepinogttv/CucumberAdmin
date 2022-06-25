@@ -1,4 +1,4 @@
-export function getBrand(brandRepository) {
+export function getBrand({ brandRepository }) {
     return async (id) => {
         return brandRepository.getOneById(id)
     }

@@ -1,4 +1,4 @@
-export function setWholesalerProductsAdditionalInfo(wholesalerProductRepository, wholesalerProductsGetterRepository) {
+export function setWholesalerProductsAdditionalInfo({ wholesalerProductRepository, wholesalerProductsGetterRepository }) {
     return async (wholesaler, updateCallback, endCallback) => {
 
         const products = await wholesalerProductRepository.getAllMatchingWholesalerId(wholesaler._id);

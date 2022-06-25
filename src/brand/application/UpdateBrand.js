@@ -1,4 +1,4 @@
-export function updateBrand(brandRepository, storageRepository) {
+export function updateBrand({ brandRepository, storageRepository }) {
     return async (id, newName, file) => {
         const brand = await brandRepository.getOneById(id);
 

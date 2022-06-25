@@ -10,34 +10,32 @@ import { repositoryFactory } from "./repositories/factory.js"
 import { repositoryFactory as productRepositoryFactory } from "../../product/infrastructure/repositories/factory.js"
 import { createChildCategory } from "../application/CreateChildCategory.js"
 
-const categoryRepostory = repositoryFactory("categoryRepository")
+const categoryRepository = repositoryFactory("categoryRepository")
 const productRepository = productRepositoryFactory("productRepository")
 
 export const CategoryController = Object.freeze({
     create: ({ body: { name } }) => makeUseCase(
         createCategory,
-        categoryRepostory
+        { categoryRepository }
     )(name),
     createChild: ({ body: { name, fatherTree, fatherIdsTree } }) => makeUseCase(
         createChildCategory,
-        categoryRepostory
+        { categoryRepository }
     )({ name, fatherTree, fatherIdsTree }),
     update: ({ params, body: { name } }) => makeUseCase(
         updateCategory,
-        categoryRepostory
+        { categoryRepository }
     )(params.id, name),
     getAll: () => makeUseCase(
         getCategories,
-        categoryRepostory
+        { categoryRepository }
     )(),
     getOne: ({ params }) => makeUseCase(
         getCategory,
-        categoryRepostory
+        { categoryRepository }
     )(params.id),
     deleteOne: ({ params }) => makeUseCase(
         deleteCategory,
-        categoryRepostory,
-        productRepository
+        { categoryRepository, productRepository }
     )(params.id),
-
 })

@@ -1,7 +1,7 @@
 
 import { Category } from '../domain/CategoryEntity.js';
 
-export function updateCategory(categoryRepository) {
+export function updateCategory({ categoryRepository }) {
     return async function (id, newName) {
 
         const category = await categoryRepository.getOneById(id);

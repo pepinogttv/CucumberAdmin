@@ -1,4 +1,4 @@
-export function getCategories(categoryRepository) {
+export function getCategories({ categoryRepository }) {
     return async function () {
         return categoryRepository.getAll()
     }
