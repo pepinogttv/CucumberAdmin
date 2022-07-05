@@ -8,9 +8,7 @@ export function makeSetWholesalerProductsAdditionalInfo({ wholesalerProductRepos
         seting = true;
 
         const authState = await wholesalerAuthStateRepository.getAuthState(wholesaler);
-        console.log({ authState })
         const Cookie = authState.getCookie();
-        console.log({ Cookie })
 
         const products = await wholesalerProductRepository.getAllMatchingWholesalerId(wholesaler._id);
         if (!products.length) return 'No hay productos para actualizar.'

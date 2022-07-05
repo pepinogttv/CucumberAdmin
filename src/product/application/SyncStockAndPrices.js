@@ -12,11 +12,9 @@ export function makeSyncStockAndPrices({ productRepository, dollarRepository, up
         }, {})
 
         for (const product of products) {
-            console.log("product", product);
             const wholesalerProduct = indexedWholesalerProducts[product.code];
             product.stock = wholesalerProduct ? wholesalerProduct.stock : 0;
             if (wholesalerProduct) {
-                console.log('EXISTE WHOLESALER PRODUCT')
                 const { amount, currency } = wholesalerProduct.price.cost;
                 if (currency === 'ARS') {
                     const dollar = await dollarRepository.getOfficialDollar();
@@ -26,11 +24,6 @@ export function makeSyncStockAndPrices({ productRepository, dollarRepository, up
                 }
             }
         }
-
-        console.log({
-            products,
-            wholesalerProducts,
-        })
 
         return await productRepository.updateMany(products);
 

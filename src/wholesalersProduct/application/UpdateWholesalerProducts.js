@@ -57,7 +57,6 @@ async function update({ wholesaler, dollar, getProducts, getOldProducts, updateC
                 if (oldProducts.length) {
                     const indexedOldProducts = indexProductsByProp(oldProducts, 'code');
                     const productsWithImages = rescueAdditionalInfo(products, indexedOldProducts);
-                    console.log({ length: productsWithImages.length })
                     return resolve(productsWithImages)
                 }
                 resolve(products);

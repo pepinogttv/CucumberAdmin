@@ -1,8 +1,9 @@
+import logger from '../../shared/infrastructure/logger.js';
 export default (controller) => (req, res) => {
     if (req.body.product) req.body.product = recursiveParse(req.body.product);
     if (req.body.category) req.body.category = recursiveParse(req.body.category);
     if (req.body.wholesaler) req.body.wholesaler = recursiveParse(req.body.wholesaler);
-
+    logger.info(req.body)
     const httpRequest = {
         body: req.body,
         files: req.files,
@@ -46,7 +47,7 @@ export default (controller) => (req, res) => {
             res.status(200).send(body);
         })
         .catch((e) => {
-            console.log(e)
+            logger.error(e);
             res.status(400).send({
                 success: false,
                 code: 400,

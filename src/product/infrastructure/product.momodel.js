@@ -23,7 +23,12 @@ const ProductSchema = Schema({
         taxs: [{ name: String, amount: Number }],
         percentOfProfit: { type: Number, default: 0 },
     },
-    wholesalerData: { type: Object, default: { name: 'Cucumber' } },
+    wholesalerData: {
+        wholesaler_id: { type: Schema.Types.ObjectId, ref: 'Wholesaler' },
+        name: { type: String, default: 'Cucumber' },
+        productPageUrl: String,
+        code: String,
+    },
     created: { type: Date, default: Date.now() },
     customFeatures: [String],
     categoryFeatures: [String],

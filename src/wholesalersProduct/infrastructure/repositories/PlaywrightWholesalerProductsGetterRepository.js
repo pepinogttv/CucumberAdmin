@@ -50,7 +50,6 @@ export const playwrightWholesalerProductsGetterRepository = Object.freeze({
     },
 
     async getAdditionalInfo(wholesaler, products, updateCallback, Cookie) {
-        console.log('GET ADDT INFO EXECUTED')
         const { homePageUrl } = wholesaler;
         const axiosInstance = axios.create({ headers: { Cookie } })
         const additionalInfo = {};

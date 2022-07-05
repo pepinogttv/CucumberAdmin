@@ -7,7 +7,6 @@ let cachedDollar = null
 
 export const dollarRepository = Object.freeze({
     getOfficialDollar: async () => {
-        console.log(cachedDollar)
         if (cachedDollar) return cachedDollar;
         try {
             const response = await axios.get(url);

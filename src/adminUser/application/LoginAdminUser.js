@@ -1,6 +1,5 @@
 export function loginAdminUser({ adminUserRepository, passwordEncrypter, tokenGenerator }) {
     return async function (username, password) {
-        console.log({ username, password })
         const user = await adminUserRepository.getByUsername(username);
         if (!user) throw new Error(404);
         const { salt } = user;

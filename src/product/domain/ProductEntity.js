@@ -19,10 +19,8 @@ export const Product = ({
     moreInfoUrl,
     ytVideos,
 }, dollar) => {
-    console.log('[PRODUCT]')
     price.sale = price.sale / dollar;
     price.percentOfProfit = calculatePercentOfProfit(price)
-    console.log({ percentOfProfit: price.percentOfProfit })
     categoryFeatures = categoryFeatures.filter(({ value }) => !!value)
 
     return Object.freeze({

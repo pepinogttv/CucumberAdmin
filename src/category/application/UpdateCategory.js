@@ -17,9 +17,7 @@ export function updateCategory({ categoryRepository }) {
         const { name: oldName } = categoryBeforeUpdate;
         const categories = await categoryRepository.getAll();
 
-        console.log(categories.length)
         for (const category of categories) {
-            console.log({ category })
             if (category.name === newName) continue;
             const newTree = category.tree.map(name => name === oldName ? newName : name);
             const newBreadcrumb = category.breadcrumb.replace(oldName, newName);

@@ -3,7 +3,6 @@ import { Category } from '../domain/CategoryEntity.js';
 
 export function createChildCategory({ categoryRepository }) {
     return async function (categoryData) {
-
         const { fatherTree, fatherIdsTree } = categoryData;
 
         if (!fatherTree.length || !fatherIdsTree.length) {
@@ -21,7 +20,8 @@ export function createChildCategory({ categoryRepository }) {
             tree,
             isFirstParent: false,
             idsTree,
-            breadcrumb
+            breadcrumb,
+            features: categoryData.features || [],
         });
 
         return await categoryRepository.create(category);

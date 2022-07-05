@@ -14,15 +14,15 @@ const categoryRepository = repositoryFactory("categoryRepository")
 const productRepository = productRepositoryFactory("productRepository")
 
 export const CategoryController = Object.freeze({
-    create: ({ body: { name } }) => makeUseCase(
+    create: ({ body: { category } }) => makeUseCase(
         createCategory,
         { categoryRepository }
-    )(name),
-    createChild: ({ body: { name, fatherTree, fatherIdsTree } }) => makeUseCase(
+    )(category),
+    createChild: ({ body: { category } }) => makeUseCase(
         createChildCategory,
         { categoryRepository }
-    )({ name, fatherTree, fatherIdsTree }),
-    update: ({ params, body: { name } }) => makeUseCase(
+    )(category),
+    update: ({ params, body: { name } }) => makeUseCase(~
         updateCategory,
         { categoryRepository }
     )(params.id, name),
