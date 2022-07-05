@@ -7,6 +7,6 @@ import { roleRequired } from "../../shared/infrastructure/middlewares/roleRequir
 export const register = (router) => {
     router.post('/admin-users', authenticate, roleRequired('owner'), makeExpressCallback(AdminUserController.create));
     router.get('/admin-users', authenticate, roleRequired('owner'), makeExpressCallback(AdminUserController.getAll));
-    router.post('/admin-users/login', makeExpressCallback(AdminUserController.login));
+    router.post('/admin-users/login', authenticate, makeExpressCallback(AdminUserController.login));
 };
 

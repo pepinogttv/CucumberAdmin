@@ -11,7 +11,7 @@ export const WholesalerProduct = ({
     images,
     url,
     code
-}) => Object.freeze({
+}) => ({
     wholesaler_id,
     name,
     brand,
@@ -23,5 +23,5 @@ export const WholesalerProduct = ({
     mainImage,
     images,
     url,
-    code
+    code,
 })

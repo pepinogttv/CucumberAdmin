@@ -35,8 +35,8 @@ export const WholesalerController = Object.freeze({
         deleteWholesaler,
         { wholesalerRepository, storageRepository }
     )(params.id),
-    updateWholesalerCategories: ({ wholesaler, endCallback }) => makeUseCase(
+    updateCategories: ({ body: { wholesaler } }) => makeUseCase(
         updateWholesalerCategories,
         { wholesalerRepository, wholesalerCategoriesGetterRepository }
-    )(wholesaler, endCallback)
+    )(wholesaler)
 })

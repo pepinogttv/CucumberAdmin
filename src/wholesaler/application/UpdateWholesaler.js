@@ -4,17 +4,21 @@ import { Wholesaler } from '../domain/WholesalerEntity.js';
 export function updateWholesaler({ wholesalerRepository, storageRepository }) {
     return async function (id, wholesalerData, file) {
 
-
-        const wholesaler = Wholesaler(wholesalerData);
-        let wholesalerUpdated = await wholesalerRepository.update(id, wholesaler);
+        let wholesaler = await wholesalerRepository.getOneById(id);
+        if (!wholesaler) throw new Error('Wholesaler not found');
 
         if (file) {
-            await storageRepository.deleteImage(wholesaler.image);
-            const imageUrl = await storageRepository.uploadImage(file);
-            wholesalerUpdated = await wholesalerRepository.updateImage(id, imageUrl);
+            const { image: oldImageUrl } = wholesalerData;
+            await storageRepository.deleteImage(oldImageUrl);
+            const imageUrl = await storageRepository.uploadImage(file, `wholesalers/${id}`);
+            wholesalerData.image = imageUrl;
         }
 
-        return wholesalerUpdated
+        wholesaler = Wholesaler(wholesalerData);
+        const updated = await wholesalerRepository.update(id, wholesaler, { new: true });
+        console.log({ updated })
+
+        return updated
 
     }
 }

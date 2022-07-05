@@ -16,10 +16,11 @@ const WholesalerProductSchema = Schema({
         amount: { type: Number, required: true },
     }],
     thumb: { type: String, required: true },
-    code: { type: String, required: true },
+    code: { type: String, required: true, unique: true },
     url: { type: String, required: true },
     mainImage: String,
     images: Array,
+    description: String
 
 });
 export const WholesalerProductModel = mongoose.model('WholesalerProduct', WholesalerProductSchema);

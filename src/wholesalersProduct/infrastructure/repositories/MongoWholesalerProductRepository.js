@@ -8,12 +8,13 @@ export const mongoWholesalerProductRepository = Object.freeze({
         return WholesalerProductModel.findById(id).exec()
     },
     getAllMatchingWholesalerId(id) {
-        return WholesalerProductModel.find({ wholesaler_id: id }).exec()
+        return WholesalerProductModel.find({ wholesaler_id: id }).lean().exec()
     },
     async updateMany(products) {
         try {
             for (let product of products) {
-                await WholesalerProductModel.updateOne({ _id: product._id }, product).exec()
+                // await WholesalerProductModel.updateOne({ _id: product._id }, product).exec()
+                await WholesalerProductModel.findByIdAndUpdate(product._id, product).exec()
             }
         } catch (err) {
             throw new Error('[UpdateMany] Error al actualizar los wholesalerProducts')

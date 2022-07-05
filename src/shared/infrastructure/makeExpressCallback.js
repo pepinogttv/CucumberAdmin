@@ -1,9 +1,8 @@
 export default (controller) => (req, res) => {
     if (req.body.product) req.body.product = recursiveParse(req.body.product);
     if (req.body.category) req.body.category = recursiveParse(req.body.category);
-    console.log({
-        body: req.body,
-    })
+    if (req.body.wholesaler) req.body.wholesaler = recursiveParse(req.body.wholesaler);
+
     const httpRequest = {
         body: req.body,
         files: req.files,
@@ -27,7 +26,17 @@ export default (controller) => (req, res) => {
 
     controller(httpRequest)
         .then((httpResponse) => {
-            res.set('Content-Type', 'application/json');
+            if (httpResponse) {
+                const { token, user } = httpResponse;
+                if (token) return res
+                    .cookie("token", token, {
+                        httpOnly: true,
+                        secure: process.env.NODE_ENV === "production",
+                    })
+                    .status(200)
+                    .json({ success: true, data: { user } })
+
+            }
             res.type('json');
             const body = {
                 success: true,
@@ -52,3 +61,5 @@ function recursiveParse(strObject) {
     if (typeof strObject !== 'string') return strObject;
     return recursiveParse(JSON.parse(strObject));
 }
+
+

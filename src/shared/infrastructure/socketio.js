@@ -1,4 +1,8 @@
 import { Server } from "socket.io";
-import http from "http";
 
-export default (server) => new Server(server);
+export default (server) => new Server(server, {
+    cors: {
+        origin: 'http://localhost:8080',
+        methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    }
+});

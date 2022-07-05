@@ -2,30 +2,27 @@
 import { chromium } from 'playwright';
 import { solutionBoxGetProducts } from '../../../shared/infrastructure/PlaywrightUtils.js'
 import axios from "axios"
-import path from 'path';
-import fs from 'fs';
-import jsdom from "jsdom"
-const { JSDOM } = jsdom;
+import { JSDOM } from "jsdom"
 
 export const playwrightWholesalerProductsGetterRepository = Object.freeze({
     async getAll(wholesaler, categories, updateCallback) {
         const { homePageUrl, user, password, name } = wholesaler;
-        const authStatePath = path.join(process.cwd(), 'shared', 'infrastructure', 'playwright-auths-states', `${name}.json`)
-        const isAuthSaved = fs.existsSync(authStatePath);
+        // const authStatePath = path.join(process.cwd(), 'src', 'shared', 'infrastructure', 'playwright-auths-states', `${name}.json`)
+        // const isAuthSaved = fs.existsSync(authStatePath);
         const browser = await chromium.launch({ headless: false });
         let page;
 
-        if (isAuthSaved) {
-            const context = await browser.newContext({ storageState: authStatePath });
-            page = await context.newPage();
-        } else {
-            page = await browser.newPage();
-            await page.goto(homePageUrl);
-            await page.fill("#username", user);
-            await page.fill("#password", password);
-            await page.click("text=Entrar");
-            await page.context().storageState({ path: authStatePath }).catch(err => console.log(err))
-        }
+        // if (isAuthSaved) {
+        //     const context = await browser.newContext({ storageState: authStatePath });
+        //     page = await context.newPage();
+        // } else {
+        page = await browser.newPage();
+        await page.goto(homePageUrl);
+        await page.fill("#username", user);
+        await page.fill("#password", password);
+        await page.click("text=Entrar");
+        // await page.context().storageState({ path: authStatePath }).catch(err => console.log(err))
+        // }
 
         await page.goto("https://www.solutionbox.com.ar/buscar?categoria=T04");
         const stockBtn = await page.$('#chkSoloStock')
@@ -36,7 +33,7 @@ export const playwrightWholesalerProductsGetterRepository = Object.freeze({
 
         const products = [];
 
-        for (const [i, { url, name }] of Object.entries(categories)) {
+        for (const [i, { url, name }] of Object.entries(categories).slice(0, 1)) {
             const categoryProducts = await solutionBoxGetProducts({
                 page,
                 categoryUrl: url,
@@ -52,31 +49,24 @@ export const playwrightWholesalerProductsGetterRepository = Object.freeze({
         return products;
     },
 
-    async getAdditionalInfo(wholesaler, products, updateCallback) {
-        const { name: wholesalerName, homePageUrl } = wholesaler;
-        const authStatePath = path.join(process.cwd(), 'shared', 'infrastructure', 'playwright-auths-states', `${wholesalerName}.json`)
-        const isAuthSaved = fs.existsSync(authStatePath);
-
-        if (isAuthSaved) {
-            const { cookies } = JSON.parse(fs.readFileSync(authStatePath));
-            const Cookie = getCookieFromCookiesArray(cookies);
-            const axiosInstance = axios.create({ headers: { Cookie } })
-            const additionalInfo = {};
-            for (const product of products) {
-                const { url } = product;
-                const { data } = await axiosInstance.get(url);
-                const dom = new JSDOM(data);
-                const { document } = dom.window;
-                const description = document.querySelector(".card-body").innerHTML;
-                const imagesElements = document.getElementById("gallery").querySelectorAll("img");
-                const images = await checkAndCorrectImages(imagesElements, axiosInstance, homePageUrl);
-                additionalInfo[product.code] = { description, images, mainImage: images[0] };
-                updateCallback(additionalInfo[product.code]);
-            }
-            return additionalInfo;
-        } else {
-            throw new Error('Missing auth state of ' + wholesalerName)
+    async getAdditionalInfo(wholesaler, products, updateCallback, Cookie) {
+        console.log('GET ADDT INFO EXECUTED')
+        const { homePageUrl } = wholesaler;
+        const axiosInstance = axios.create({ headers: { Cookie } })
+        const additionalInfo = {};
+        for (const product of products) {
+            const { url } = product;
+            const { data } = await axiosInstance.get(url);
+            const dom = new JSDOM(data);
+            const { document } = dom.window;
+            const description = document.querySelector(".card-body").innerHTML;
+            const imagesElements = document.getElementById("gallery").querySelectorAll("img");
+            const images = await checkAndCorrectImages(imagesElements, axiosInstance, homePageUrl);
+            additionalInfo[product.code] = { description, images, mainImage: images[0] };
+            updateCallback(additionalInfo[product.code]);
         }
+        return additionalInfo;
+
     }
 })
 

@@ -3,20 +3,20 @@
     {
       "sameSite": "Lax",
       "name": "_ga",
-      "value": "GA1.3.656638313.1655351886",
+      "value": "GA1.3.1050256738.1656595809",
       "domain": ".solutionbox.com.ar",
       "path": "/",
-      "expires": 1718423885,
+      "expires": 1719667827,
       "httpOnly": false,
       "secure": false
     },
     {
       "sameSite": "Lax",
       "name": "_gid",
-      "value": "GA1.3.321799741.1655351886",
+      "value": "GA1.3.404565859.1656595809",
       "domain": ".solutionbox.com.ar",
       "path": "/",
-      "expires": 1655438285,
+      "expires": 1656682227,
       "httpOnly": false,
       "secure": false
     },
@@ -26,14 +26,14 @@
       "value": "1",
       "domain": ".solutionbox.com.ar",
       "path": "/",
-      "expires": 1655351945,
+      "expires": 1656595869,
       "httpOnly": false,
       "secure": false
     },
     {
       "sameSite": "None",
       "name": "YSC",
-      "value": "ovg4bo1EjIQ",
+      "value": "DY6IXEKqEkM",
       "domain": ".youtube.com",
       "path": "/",
       "expires": -1,
@@ -43,17 +43,17 @@
     {
       "sameSite": "None",
       "name": "VISITOR_INFO1_LIVE",
-      "value": "kzZcO2o9XAQ",
+      "value": "nTl_mzA0vy4",
       "domain": ".youtube.com",
       "path": "/",
-      "expires": 1670903885.833583,
+      "expires": 1672147809.411362,
       "httpOnly": true,
       "secure": true
     },
     {
       "sameSite": "Lax",
       "name": "PHPSESSID",
-      "value": "kqdr9t4vq9esgskonqe1l373j3",
+      "value": "dsqam0h7idhb0aa61kn3lq9cr4",
       "domain": "www.solutionbox.com.ar",
       "path": "/",
       "expires": -1,
@@ -67,15 +67,15 @@
       "localStorage": [
         {
           "name": "yt-remote-device-id",
-          "value": "{\"data\":\"24ebdf9f-0564-4744-9ff9-f6fedbe88282\",\"expiration\":1686887887357,\"creation\":1655351887358}"
+          "value": "{\"data\":\"4fdb30d5-208a-440e-bee4-f4673c52837c\",\"expiration\":1688131811054,\"creation\":1656595811054}"
         },
         {
           "name": "yt-remote-connected-devices",
-          "value": "{\"data\":\"[]\",\"expiration\":1655438287670,\"creation\":1655351887670}"
+          "value": "{\"data\":\"[]\",\"expiration\":1656682220660,\"creation\":1656595820660}"
         },
         {
           "name": "ytidb::LAST_RESULT_ENTRY_KEY",
-          "value": "{\"data\":{\"hasSucceededOnce\":true},\"expiration\":1657943889367,\"creation\":1655351889367}"
+          "value": "{\"data\":{\"hasSucceededOnce\":true},\"expiration\":1659187820104,\"creation\":1656595820104}"
         }
       ]
     },
@@ -84,9 +84,10 @@
       "localStorage": [
         {
           "name": "pigeon_state",
-          "value": "{\"lastDeviceInfoTime\":1655351899960}"
+          "value": "{\"lastDeviceInfoTime\":1656595817825}"
         }
       ]
     }
-  ]
+  ],
+  "expirationDate": "2022-06-30T19:30:27.636Z"
 }

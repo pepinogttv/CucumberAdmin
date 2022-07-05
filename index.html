@@ -47,12 +47,12 @@
         console.log(msg);
       });
       const wholesaler = {
-        _id: "62a7e3580b6a058a85b599d3",
+        _id: "62aa2b477ee05f2c70e491db",
         name: "SolutionBox",
         user: "listasmariano@speedy.com.ar",
         password: "dari1971",
         homePageUrl: "https://www.solutionbox.com.ar/",
-        categories: getCategories().splice(0, 1),
+        categories: getCategories().splice(0, 2),
         productsPageUrl: "https://www.solutionbox.com.ar/buscar-libre",
         products: [],
         __v: 0,
@@ -61,25 +61,53 @@
       };
 
       function updateAdditionalInfo() {
-        socket.emit("set-wholesaler-products-additional-info", {
-          wholesaler,
-        });
-        socket.on("set-wholesaler-products-additional-info:updating", (msg) => {
-          console.log(msg);
-        });
-        socket.on("set-wholesaler-products-additional-info:ended", (msg) => {
-          console.log(msg);
-        });
+        fetch("/set-wholesaler-products-additional-info", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            wholesaler,
+          }),
+        })
+          .then((res) => res.json())
+          .then(({ data }) => {
+            const { updatingEventName, endEventName, message } = data;
+            console.log(`[INFO] ${message}`);
+            socket.on(updatingEventName, (data) => {
+              console.log(`[EVENT] ${updatingEventName}`);
+              console.log(data);
+            });
+            socket.on(endEventName, (data) => {
+              console.log(`[EVENT] ${endEventName}`);
+              console.log(data);
+            });
+          });
       }
+
       function updateWhoesalerProducts() {
-        console.log("updateWhoesalerProducts");
-        socket.emit("update-wholesaler-products", { wholesaler });
-        socket.on("update-wholesaler-products:updating", (msg) => {
-          console.log(msg);
-        });
-        socket.on("update-wholesaler-products:ended", (msg) => {
-          console.log(msg);
-        });
+        fetch("/update-wholesaler-products", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            wholesaler,
+          }),
+        })
+          .then((res) => res.json())
+          .then(({ data }) => {
+            const { updatingEventName, endEventName, message } = data;
+            console.log(`[INFO] ${message}`);
+            socket.on(updatingEventName, (data) => {
+              console.log(`[EVENT] ${updatingEventName}`);
+              console.log(data);
+            });
+            socket.on(endEventName, (data) => {
+              console.log(`[EVENT] ${endEventName}`);
+              console.log(data);
+            });
+          });
       }
       function updateWholesalerCategories() {
         socket.emit("update-wholesaler-categories", { wholesaler });

@@ -1,7 +1,7 @@
 
 import { Product } from '../domain/ProductEntity.js';
 
-export function updateProduct({ productRepository, storageRepository, dollarRepository }) {
+export function makeUpdateProduct({ productRepository, storageRepository, dollarRepository }) {
     return async function (_id, productData, files) {
 
         const dollar = await dollarRepository.getOfficialDollar();

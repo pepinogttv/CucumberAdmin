@@ -1,7 +1,22 @@
 
 import { Product } from '../domain/ProductEntity.js';
 
-export function createProduct({ productRepository, storageRepository, dollarRepository, emitter }) {
+/*
+productData: {
+    name,
+    brand: {
+        _id,
+        name,
+    },
+    category: {
+        name,
+
+    }
+}
+*/
+
+
+export function makeCreateProduct({ productRepository, storageRepository, dollarRepository, emitter }) {
     return async function (productData, files) {
         const dollar = await dollarRepository.getOfficialDollar();
         const product = Product(productData, dollar);

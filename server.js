@@ -1,41 +1,49 @@
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import logger from "./src/shared/infrastructure/logger.js"
 import { registerRoutes } from "./src/shared/infrastructure/routes/index.js";
 import http from "http";
 
 import { emitter, registerEventListener } from "./src/shared/infrastructure/eventEmitter/index.js";
 
-import SocketIoServer from "./src/shared/infrastructure/socketio.js";
+import createIo from "./src/shared/infrastructure/socketio.js";
 import { registerWebscoketEvents } from "./src/shared/infrastructure/webscoketEvents/index.js";
 
 import path from "path";
 
-export const Server = (port) => {
+export function Server(port) {
     let httpServer;
     const app = express();
+    app.use(cookieParser())
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
-    app.use(cors());
+    app.use(cors({
+        origin: 'http://localhost:8080',
+        credentials: true,
+    }));
 
     const router = express.Router();
     app.use(router)
 
     const server = http.createServer(app);
-    const io = SocketIoServer(server);
+    const io = createIo(server);
 
     registerRoutes(router, app);
-    registerEventListener(emitter);
+    // registerEventListener(emitter);
 
     app.get('/', (req, res) => {
         res.sendFile(path.join(process.cwd(), 'index.html'));
     })
 
-    return ({
+    return {
         listen: () => {
             return new Promise(resolve => {
                 httpServer = server.listen(port, () => {
-                    io.on('connection', socket => registerWebscoketEvents(socket))
+                    io.on('connection', socket => {
+                        registerEventListener(emitter, socket);
+                        registerWebscoketEvents(socket);
+                    })
                     logger.info(`Server listening on port ${port}`);
                     resolve();
                 });
@@ -51,37 +59,6 @@ export const Server = (port) => {
                 })
             })
         }
-    })
+    }
 }
 
-// export class Server {
-//     httpServer;
-//     constructor(port) {
-//         this.port = port;
-//         this.logger = logger;
-//         this.express = express();
-//         this.express.use(express.json());
-//         this.express.use(express.urlencoded({ extended: true }));
-//         const router = express.Router();
-//         this.express.use(router)
-//         registerRoutes(router);
-//     }
-//     async listen() {
-//         return new Promise(resolve => {
-//             this.httpServer = this.express.listen(this.port, () => {
-//                 this.logger.info(`Server listening on port ${this.port}`);
-//                 resolve();
-//             });
-//         })
-//     }
-//     async stop() {
-//         return new Promise((resolve, reject) => {
-//             if (!this.httpServer) return resolve()
-//             this.httpServer.close(err => {
-//                 if (err) reject(err);
-//                 this.logger.info(`Server stopped`);
-//                 resolve();
-//             })
-//         })
-//     }
-// }

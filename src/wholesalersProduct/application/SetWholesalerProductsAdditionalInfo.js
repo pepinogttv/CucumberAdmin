@@ -1,23 +1,67 @@
-export function setWholesalerProductsAdditionalInfo({ wholesalerProductRepository, wholesalerProductsGetterRepository }) {
-    return async (wholesaler, updateCallback, endCallback) => {
+let seting = false;
+const updatingEventName = 'wholesalerProduct.setAdditionalInfo:updating';
+const endEventName = 'wholesalerProduct.setAdditionalInfo:end';
+
+export function makeSetWholesalerProductsAdditionalInfo({ wholesalerProductRepository, wholesalerProductsGetterRepository, wholesalerAuthStateRepository, emitter }) {
+    return async (wholesaler) => {
+        if (seting) return 'Banca loco, se esta actualizando.'
+        seting = true;
+
+        const authState = await wholesalerAuthStateRepository.getAuthState(wholesaler);
+        console.log({ authState })
+        const Cookie = authState.getCookie();
+        console.log({ Cookie })
 
         const products = await wholesalerProductRepository.getAllMatchingWholesalerId(wholesaler._id);
-        const productsMissingAdditionalInfo = products.filter(product => !product.mainImage || !product.images || !product.images.length || !product.description);
-        const productsFull = products.filter(product => product.mainImage && product.images && product.images.length && product.description);
+        if (!products.length) return 'No hay productos para actualizar.'
 
-        const additionalInfo = await wholesalerProductsGetterRepository.getAdditionalInfo(wholesaler, productsMissingAdditionalInfo, updateCallback);
+        const productsMissingAdditionalInfo = products.filter(missingAdditionaInfo);
+        const productsFull = products.filter(noMissingAdditionalInfo);
 
-        const completedMissingProducts = productsMissingAdditionalInfo.map(product => {
-            product = product.toObject() || product.__doc || product;
-            const additionalInfoForProduct = additionalInfo[product.code];
-            return { ...product, ...additionalInfoForProduct };
+        set({
+            wholesaler,
+            productsMissingAdditionalInfo,
+            productsFull,
+            updateCallback: product => emitter.emit(updatingEventName, product),
+            getAdditionalInfo: wholesalerProductsGetterRepository.getAdditionalInfo,
+            Cookie
         })
+            .then(readyProducts => {
+                wholesalerProductRepository.updateMany(readyProducts)
+                    .then(() => emitter.emit(endEventName, readyProducts))
+                    .catch(error => emitter.emit(endEventName, { error }))
+                    .finally(() => (seting = false))
+            })
 
-        const completedProducts = [...productsFull, ...completedMissingProducts];
-
-        const res = await wholesalerProductRepository.updateMany(completedProducts);
-        endCallback()
-        return res;
-
+        return {
+            message: 'Se esta actualizando la informacion adicional de los productos.',
+            updatingEventName,
+            endEventName
+        }
     }
+}
+
+async function set({ wholesaler, productsMissingAdditionalInfo, productsFull, updateCallback, getAdditionalInfo, Cookie }) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const additionalInfo = await getAdditionalInfo(wholesaler, productsMissingAdditionalInfo, updateCallback, Cookie);
+            const completedMissingProducts = productsMissingAdditionalInfo.map(product => {
+                const additionalInfoForProduct = additionalInfo[product.code];
+                return { ...product, ...additionalInfoForProduct };
+            })
+            const completedProducts = [...productsFull, ...completedMissingProducts];
+            resolve(completedProducts);
+        } catch (error) {
+            reject(error);
+        }
+    })
+
+}
+
+function missingAdditionaInfo(product) {
+    return !product.mainImage || !product.images || !product.images.length || !product.description
+}
+
+function noMissingAdditionalInfo(product) {
+    return product.mainImage && product.images && product.images.length && product.description
 }

@@ -1,41 +1,42 @@
-import makeUseCase from "../../shared/application/makeUseCase.js";
+//Import general dependencies
 import { emitter } from "../../shared/infrastructure/eventEmitter/index.js";
 
+//Import use cases
+import { makeCreateProduct } from "../application/CreateProduct.js";
+import { makeGetProducts } from "../application/GetProducts.js";
+import { makeGetProduct } from "../application/GetProduct.js";
+import { makeDeleteProduct } from "../application/DeleteProduct.js";
+import { makeUpdateProduct } from "../application/UpdateProduct.js";
+import { makeSyncStockAndPrices } from "../application/SyncStockAndPrices.js"
+import { makeUpdateWholesalerProducts } from "../../wholesalersProduct/application/UpdateWholesalerProducts.js";
 
-import { createProduct } from "../application/CreateProduct.js";
-import { getProducts } from "../application/GetProducts.js";
-import { getProduct } from "../application/GetProduct.js";
-import { deleteProduct } from "../application/DeleteProduct.js";
-import { updateProduct } from "../application/UpdateProduct.js";
-
-
+//Import repositories factories
 import { repositoryFactory } from "./repositories/factory.js";
 import { sharedRepositoryFactory } from "../../shared/infrastructure/repositories/factory.js"
+import { repositoryFactory as wpFactory } from "../../wholesalersProduct/infrastructure/repositories/factory.js";
 
+//Create repositories with factories
 const productRepository = repositoryFactory("productRepository");
 const storageRepository = sharedRepositoryFactory("storageRepository");
 const dollarRepository = sharedRepositoryFactory("dollarRepository");
+const wholesalerProductRepository = wpFactory("wholesalerProductRepository");
+const wholesalerProductsGetterRepository = wpFactory("wholesalerProductsGetterRepository");
 
+//make use cases and inject dependencies
+const updateWholesalerProducts = makeUpdateWholesalerProducts({ wholesalerProductRepository, wholesalerProductsGetterRepository, dollarRepository, emitter });
+const createProduct = makeCreateProduct({ productRepository, storageRepository, dollarRepository, emitter });
+const getProducts = makeGetProducts({ productRepository, dollarRepository });
+const getProduct = makeGetProduct({ productRepository });
+const deleteProduct = makeDeleteProduct({ productRepository, storageRepository });
+const updateProduct = makeUpdateProduct({ productRepository, storageRepository, dollarRepository });
+const syncStockAndPrices = makeSyncStockAndPrices({ productRepository, dollarRepository, updateWholesalerProducts, wholesalerProductRepository });
+
+//Export controller
 export const ProductController = Object.freeze({
-    create: ({ body: { product }, files }) => makeUseCase(
-        createProduct,
-        { productRepository, storageRepository, dollarRepository, emitter }
-    )(product, files),
-    update: ({ params, body: { product }, files }) => makeUseCase(
-        updateProduct,
-        { productRepository, storageRepository, dollarRepository }
-    )(params.id, product, files),
-    getAll: () => makeUseCase(
-        getProducts,
-        { productRepository }
-    )(),
-    getOne: ({ params }) => makeUseCase(
-        getProduct,
-        { productRepository }
-    )(params.id),
-    deleteOne: ({ params }) => makeUseCase(
-        deleteProduct,
-        { productRepository, storageRepository }
-    )(params.id),
-
+    create: ({ body: { product }, files }) => createProduct(product, files),
+    update: ({ params, body: { product }, files }) => updateProduct(params.id, product, files),
+    getAll: getProducts,
+    getOne: ({ params }) => getProduct(params.id),
+    deleteOne: ({ params }) => deleteProduct(params.id),
+    syncStockAndPrices: ({ body: { wholesaler } }) => syncStockAndPrices(wholesaler)
 })

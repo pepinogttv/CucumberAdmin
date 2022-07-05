@@ -1,10 +1,10 @@
-import makeUseCase from "../../shared/application/makeUseCase.js";
+import { emitter } from "../../shared/infrastructure/eventEmitter/index.js";
 
-import { updateWholesalerProducts } from "../application/UpdateWholesalerProducts.js";
-import { setWholesalerProductsAdditionalInfo } from "../application/SetWholesalerProductsAdditionalInfo.js";
-import { getWholesalerProductsFromOneWholesaler } from "../application/GetWhoProFromOneWholesaler.js";
-import { getWholesalerProducts } from "../application/GetWholesalerProducts.js";
-import { getWholesalerProduct } from "../application/GetWholesalerProduct.js";
+import { makeUpdateWholesalerProducts } from "../application/UpdateWholesalerProducts.js";
+import { makeSetWholesalerProductsAdditionalInfo } from "../application/SetWholesalerProductsAdditionalInfo.js";
+import { makeGetWholesalerProductsFromOneWholesaler } from "../application/GetWhoProFromOneWholesaler.js";
+import { makeGetWholesalerProducts } from "../application/GetWholesalerProducts.js";
+import { makeGetWholesalerProduct } from "../application/GetWholesalerProduct.js";
 
 
 import { repositoryFactory } from "./repositories/factory.js";
@@ -13,27 +13,21 @@ import { sharedRepositoryFactory } from "../../shared/infrastructure/repositorie
 const wholesalerProductRepository = repositoryFactory("wholesalerProductRepository");
 const wholesalerProductsGetterRepository = repositoryFactory("wholesalerProductsGetterRepository");
 const dollarRepository = sharedRepositoryFactory("dollarRepository");
+const wholesalerAuthStateRepository = sharedRepositoryFactory("wholesalerAuthStateRepository");
+
+
+//Make uses cases injecting dependencies
+const updateWholesalerProducts = makeUpdateWholesalerProducts({ wholesalerProductRepository, wholesalerProductsGetterRepository, dollarRepository, emitter });
+const setWholesalerProductsAdditionalInfo = makeSetWholesalerProductsAdditionalInfo({ wholesalerProductRepository, wholesalerProductsGetterRepository, wholesalerAuthStateRepository, emitter });
+const getWholesalerProductsFromOneWholesaler = makeGetWholesalerProductsFromOneWholesaler({ wholesalerProductRepository, dollarRepository });
+const getWholesalerProducts = makeGetWholesalerProducts({ wholesalerProductsGetterRepository });
+const getWholesalerProduct = makeGetWholesalerProduct({ wholesalerProductRepository, dollarRepository });
 
 
 export const WholesalerProductController = Object.freeze({
-    update: ({ wholesaler, updateCallback, endCallback }) => makeUseCase(
-        updateWholesalerProducts,
-        { wholesalerProductRepository, wholesalerProductsGetterRepository, dollarRepository }
-    )(wholesaler, updateCallback, endCallback),
-    setAdditionalInfo: ({ wholesaler, updateCallback, endCallback }) => makeUseCase(
-        setWholesalerProductsAdditionalInfo,
-        { wholesalerProductRepository, wholesalerProductsGetterRepository }
-    )(wholesaler, updateCallback, endCallback),
-    getAll: () => makeUseCase(
-        getWholesalerProducts,
-        { wholesalerProductRepository }
-    )(),
-    getAllByWholesalerId: ({ params }) => makeUseCase(
-        getWholesalerProductsFromOneWholesaler,
-        { wholesalerProductRepository }
-    )(params.wholesalerId),
-    getOne: ({ params }) => makeUseCase(
-        getWholesalerProduct,
-        { wholesalerProductRepository }
-    )(params.id),
+    update: ({ body: { wholesaler } }) => updateWholesalerProducts(wholesaler),
+    setAdditionalInfo: ({ body: { wholesaler } }) => setWholesalerProductsAdditionalInfo(wholesaler),
+    getAll: getWholesalerProducts,
+    getAllByWholesalerId: ({ params }) => getWholesalerProductsFromOneWholesaler(params.wholesalerId),
+    getOne: ({ params }) => getWholesalerProduct(params.id),
 })

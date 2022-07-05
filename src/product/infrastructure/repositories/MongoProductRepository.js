@@ -12,5 +12,18 @@ export const mongoProductRepository = {
     },
     getAllByCategoryId(category_id) {
         return ProductModel.find({ category_id }).exec()
-    }
+    },
+    getAllMatchingWholesalerId(wholesaler_id) {
+        return ProductModel.find({ wholesaler_id }).exec()
+    },
+    async updateMany(products) {
+        try {
+            for (let product of products) {
+                await ProductModel.findByIdAndUpdate(product._id, product).exec()
+            }
+        } catch (err) {
+            throw new Error('[UpdateMany] Error al actualizar los products')
+        }
+        return products
+    },
 }
