@@ -4,8 +4,9 @@ import path from 'path';
 import fs from 'fs';
 
 export const playwrightWholesalerAuthStateRepository = Object.freeze({
-    async getAuthState(wholesaler) {
+    async get(wholesaler) {
         const authStatePath = getAuthStatePath(wholesaler)
+        console.log({ isExpired: isExpired(authStatePath) })
         if (isExpired(authStatePath)) {
             await setAuthState(wholesaler, authStatePath)
         }
@@ -57,7 +58,7 @@ function setAuthStateExpirationDate(path) {
 function isExpired(authStatePath) {
     if (!fs.existsSync(authStatePath)) return true
     const authState = getAuthStateFromPath(authStatePath)
-    const expirationDate = authState.expirationDate
+    const expirationDate = new Date(authState.expirationDate).getTime();
     const now = new Date()
     return now > expirationDate
 }

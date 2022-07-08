@@ -1,3 +1,4 @@
+
 class SolutionBoxProduct {
     constructor(listItem, category, categoryUrl) {
         this.listItem = listItem;
@@ -8,7 +9,7 @@ class SolutionBoxProduct {
         this.brand = null;
         this.stock = null;
         this.price = null;
-        this.taxs = null;
+        this.taxs = [];
         this.thumb = null;
         this.url = null;
         this.images = null;
@@ -23,13 +24,9 @@ class SolutionBoxProduct {
         this.brand = brand.trim();
     }
     async setStock() {
-        let stock = await this.listItem.$(".li-stock");
-        if (!stock) {
-            this.stock = 0
-            return
-        };
-        stock = (await stock.innerText()).split(": ")[1];
-        this.stock = stock;
+        let stock = await this.listItem.$("text=Stock")
+        const stockText = await stock.innerText();
+        this.stock = Number(stockText.split(' ')[1].trim())
     }
     async setPrice() {
         const element = await this.listItem.$(".li-price");
@@ -53,22 +50,37 @@ class SolutionBoxProduct {
     }
     async setTaxs() {
         const element = await this.listItem.$(".li-price");
-        if (!element) return;
-        let innerText = await element.innerText();
-        if (!innerText) return;
-        let tax = innerText.split("\n")[1];
-        if (!tax) return;
-
-        const currency = tax.includes("U$S") ? "USD" : "ARS";
-        const amount = currency === "USD" ?
-            Number(tax.trim().split(" ")[2]) :
-            Number(tax.trim().split(" ")[2].replace(",", ""));
-
-        this.taxs = [{
-            name: "IVA",
-            currency,
-            amount
-        }]
+        const [ivaElement, intElement] = await Promise.all([
+            element.$("text=IVA"),
+            element.$("text=Imp.Int")
+        ])
+        const addIva = async () => {
+            if (!ivaElement) return;
+            const ivaText = await ivaElement.innerText();
+            const currency = ivaText.includes("U$S") ? "USD" : "ARS";
+            const amount = currency === "USD"
+                ? parsePotentiallyGroupedFloat(ivaText.split(' ')[2].trim())
+                : parsePotentiallyGroupedFloat(ivaText.trim().split(" ")[2].replace(",", ""));
+            this.taxs.push({
+                name: "IVA",
+                currency: currency,
+                amount: amount || 0
+            })
+        }
+        const addInt = async () => {
+            if (!intElement) return;
+            const intText = await intElement.innerText();
+            const currency = intText.includes("U$S") ? "USD" : "ARS";
+            const amount = currency === "USD"
+                ? parsePotentiallyGroupedFloat(intText.split(' ')[2].trim())
+                : parsePotentiallyGroupedFloat(intText.trim().split(" ")[2].replace(",", ""));
+            this.taxs.push({
+                name: "Impuesto Interno",
+                currency: currency,
+                amount: amount || 0
+            })
+        }
+        await Promise.all([addIva(), addInt()]);
     }
     async setProductPageUrl() {
         const productPageUrl = await this.listItem.$eval("#ver-producto", (el) => el.href);
@@ -151,7 +163,7 @@ async function solutionBoxCategoriesListToJson(liGroup) {
 }
 
 async function solutionBoxGetProducts({ page, categoryUrl, category, updateCallback, acc }) {
-    console.log({ categoryUrl, category, updateCallback });
+    // console.log({ categoryUrl, category, updateCallback });
     const products = [];
     await page.goto(categoryUrl);
 
@@ -160,6 +172,8 @@ async function solutionBoxGetProducts({ page, categoryUrl, category, updateCallb
 
     for (let pageNumber = 1; pageNumber < totalPages + 1; pageNumber++) {
         await page.goto(`${categoryUrl}&pag=${pageNumber}`);
+        const isLastPage = pageNumber === totalPages + 1;
+        if (isLastPage) await new Promise(resolve => setTimeout(resolve, 10000));
         const productList = await page.$$("#grilla li.li-product");
 
         for (const product of productList) {
@@ -175,4 +189,14 @@ async function solutionBoxGetProducts({ page, categoryUrl, category, updateCallb
 export {
     solutionBoxCategoriesListToJson,
     solutionBoxGetProducts
+}
+
+
+function parsePotentiallyGroupedFloat(stringValue) {
+    stringValue = stringValue.trim();
+    var result = stringValue.replace(/[^0-9]/g, '');
+    if (/[,\.]\d{2}$/.test(stringValue)) {
+        result = result.replace(/(\d{2})$/, '.$1');
+    }
+    return parseFloat(result);
 }

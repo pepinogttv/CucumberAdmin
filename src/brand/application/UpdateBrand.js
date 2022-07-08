@@ -1,28 +1,30 @@
 export function updateBrand({ brandRepository, storageRepository }) {
-    return async (id, newName, file) => {
+    return async (id, { name }, file) => {
+        console.log({ id })
         const brand = await brandRepository.getOneById(id);
+        const isNewName = name && name !== brand.name;
 
-        let newImageUrl;
-        if (file) {
-            await storageRepository.deleteImage(brand.image)
-            newImageUrl = await storageRepository.ulpoadImage(file)
+
+        let data = {}
+        if (file && isNewName) {
+            console.log('ENTRA 1')
+            await storageRepository.deleteImage(brand.logo)
+            data.logo = await storageRepository.uploadImage(file, `brands`, name);
+            data.name = name;
+        } else if (file && !isNewName) {
+            console.log('ENTRA 2')
+            await storageRepository.deleteImage(brand.logo)
+            data.logo = await storageRepository.uploadImage(file, `brands`, brand.name);
+        } else if (!file && isNewName) {
+            console.log('ENTRA 3')
+            data.name = name;
+        } else {
+            console.log('ENTRA 4')
+            throw new Error("Error updating brand");
         }
 
-        if (newName && newImageUrl) {
-            return await brandRepository.update(id, {
-                name: newName,
-                image: newImageUrl
-            })
-        } else if (newName && !newImageUrl) {
-            return await brandRepository.update(id, {
-                name: newName,
-            })
-        } else if (!newName && newImageUrl) {
-            return await brandRepository.update(id, {
-                image: newImageUrl,
-            })
-        }
+        return await brandRepository.update(id, data);
 
-        throw new Error('Error al actualizar la marca.')
+
     }
 }

@@ -5,24 +5,12 @@ import axios from "axios"
 import { JSDOM } from "jsdom"
 
 export const playwrightWholesalerProductsGetterRepository = Object.freeze({
-    async getAll(wholesaler, categories, updateCallback) {
-        const { homePageUrl, user, password, name } = wholesaler;
-        // const authStatePath = path.join(process.cwd(), 'src', 'shared', 'infrastructure', 'playwright-auths-states', `${name}.json`)
-        // const isAuthSaved = fs.existsSync(authStatePath);
+    async getAll(wholesaler, categories, updateCallback, authState) {
+        // const { homePageUrl, user, password } = wholesaler;
+        console.log(authState)
         const browser = await chromium.launch({ headless: false });
-        let page;
-
-        // if (isAuthSaved) {
-        //     const context = await browser.newContext({ storageState: authStatePath });
-        //     page = await context.newPage();
-        // } else {
-        page = await browser.newPage();
-        await page.goto(homePageUrl);
-        await page.fill("#username", user);
-        await page.fill("#password", password);
-        await page.click("text=Entrar");
-        // await page.context().storageState({ path: authStatePath }).catch(err => console.log(err))
-        // }
+        const context = await browser.newContext({ storageState: authState });
+        const page = await context.newPage();
 
         await page.goto("https://www.solutionbox.com.ar/buscar?categoria=T04");
         const stockBtn = await page.$('#chkSoloStock')

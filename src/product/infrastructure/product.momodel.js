@@ -19,15 +19,15 @@ const ProductSchema = Schema({
     description: { type: String, required: false },
     price: {
         cost: { type: Number, default: 0 },
-        sale: Number,
+        sale: { type: Number, required: true },
         taxs: [{ name: String, amount: Number }],
         percentOfProfit: { type: Number, default: 0 },
     },
     wholesalerData: {
-        wholesaler_id: { type: Schema.Types.ObjectId, ref: 'Wholesaler' },
+        wholesalerId: { type: Schema.Types.ObjectId, ref: 'Wholesaler' },
         name: { type: String, default: 'Cucumber' },
         productPageUrl: String,
-        code: String,
+        productCode: { type: String, unique: true },
     },
     created: { type: Date, default: Date.now() },
     customFeatures: [String],

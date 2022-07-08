@@ -1,4 +1,4 @@
-export function getProductImages({ productHelperRepository }) {
+export function makeGetProductImages({ productHelperRepository }) {
     return async function (name, productPageUrl) {
         const productHelper = productHelperRepository.get(name);
         if (!productHelper) throw new Error(`Product helper ${name} not found`);

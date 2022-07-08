@@ -3,7 +3,7 @@ import axios from 'axios'
 import { xml2js } from "xml-js"
 
 const url = 'https://www.dolarsi.com/api/dolarSiInfo.xml';
-let cachedDollar = null
+let cachedDollar;
 
 export const dollarRepository = Object.freeze({
     getOfficialDollar: async () => {

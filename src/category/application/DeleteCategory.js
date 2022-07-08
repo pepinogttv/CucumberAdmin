@@ -1,4 +1,4 @@
-export function deleteCategory({ categoryRepository, productRepository }) {
+export function makeDeleteCategory({ categoryRepository, productRepository }) {
     return async (id) => {
 
         const products = await productRepository.getAllByCategoryId(id);
@@ -7,12 +7,11 @@ export function deleteCategory({ categoryRepository, productRepository }) {
             throw new Error('Cannot delete category with products');
         }
 
-        const childs = await categoryRepository.getChildsById(id);
-        const hasChilds = childs && childs.length > 0;
+        const childs = await categoryRepository.getChilds(id);
+        const hasChilds = childs && childs.length > 1;
         if (hasChilds) {
             throw new Error('Cannot delete category with childs');
         }
-
         return categoryRepository.deleteOneById(id);
     }
 }

@@ -17,7 +17,7 @@ const wholesalerAuthStateRepository = sharedRepositoryFactory("wholesalerAuthSta
 
 
 //Make uses cases injecting dependencies
-const updateWholesalerProducts = makeUpdateWholesalerProducts({ wholesalerProductRepository, wholesalerProductsGetterRepository, dollarRepository, emitter });
+const updateWholesalerProducts = makeUpdateWholesalerProducts({ wholesalerProductRepository, wholesalerProductsGetterRepository, dollarRepository, emitter, wholesalerAuthStateRepository });
 const setWholesalerProductsAdditionalInfo = makeSetWholesalerProductsAdditionalInfo({ wholesalerProductRepository, wholesalerProductsGetterRepository, wholesalerAuthStateRepository, emitter });
 const getWholesalerProductsFromOneWholesaler = makeGetWholesalerProductsFromOneWholesaler({ wholesalerProductRepository, dollarRepository });
 const getWholesalerProducts = makeGetWholesalerProducts({ wholesalerProductsGetterRepository });
@@ -25,7 +25,7 @@ const getWholesalerProduct = makeGetWholesalerProduct({ wholesalerProductReposit
 
 
 export const WholesalerProductController = Object.freeze({
-    update: ({ body: { wholesaler } }) => updateWholesalerProducts(wholesaler),
+    update: ({ body: { wholesaler, categories } }) => updateWholesalerProducts(wholesaler, false, categories),
     setAdditionalInfo: ({ body: { wholesaler } }) => setWholesalerProductsAdditionalInfo(wholesaler),
     getAll: getWholesalerProducts,
     getAllByWholesalerId: ({ params }) => getWholesalerProductsFromOneWholesaler(params.wholesalerId),

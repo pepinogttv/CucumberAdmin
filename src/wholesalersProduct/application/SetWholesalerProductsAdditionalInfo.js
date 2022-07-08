@@ -1,3 +1,4 @@
+
 let seting = false;
 const updatingEventName = 'wholesalerProduct.setAdditionalInfo:updating';
 const endEventName = 'wholesalerProduct.setAdditionalInfo:end';
@@ -7,7 +8,7 @@ export function makeSetWholesalerProductsAdditionalInfo({ wholesalerProductRepos
         if (seting) return 'Banca loco, se esta actualizando.'
         seting = true;
 
-        const authState = await wholesalerAuthStateRepository.getAuthState(wholesaler);
+        const authState = await wholesalerAuthStateRepository.get(wholesaler);
         const Cookie = authState.getCookie();
 
         const products = await wholesalerProductRepository.getAllMatchingWholesalerId(wholesaler._id);

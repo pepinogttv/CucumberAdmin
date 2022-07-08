@@ -33,7 +33,15 @@ const syncStockAndPrices = makeSyncStockAndPrices({ productRepository, dollarRep
 
 //Export controller
 export const ProductController = Object.freeze({
-    create: ({ body: { product }, files }) => createProduct(product, files),
+    create: ({ body: { product }, files, user }) => {
+        if (!files.length) return Promise.reject(new Error("Los archivos son requeridos"));
+        if (!product.price?.sale) return Promise.reject(new Error("El precio de venta es requerido"));
+        if (!product.name) return Promise.reject(new Error("El nombre es requerido"));
+        if (!product.brand?._id) return Promise.reject(new Error("La marca es requerida"));
+        if (!product.category?._id) return Promise.reject(new Error("La categoria es requerida"));
+        if (!product.stock) return Promise.reject(new Error("El stock es requerido"));
+        return createProduct(product, files, user)
+    },
     update: ({ params, body: { product }, files }) => updateProduct(params.id, product, files),
     getAll: getProducts,
     getOne: ({ params }) => getProduct(params.id),

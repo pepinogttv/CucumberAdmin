@@ -14,10 +14,10 @@ export const register = (router) => {
     router.get('/wholesaler-products/product/:id', makeExpressCallback(
         WholesalerProductController.getOne
     ))
-    router.post('/update-wholesaler-products', authenticate, roleRequired('owner'), makeExpressCallback(
+    router.post('/wholesaler-products/update-from-wholesaler', authenticate, roleRequired('owner'), makeExpressCallback(
         WholesalerProductController.update
     ));
-    router.post('/set-wholesaler-products-additional-info', authenticate, roleRequired('owner'), makeExpressCallback(
+    router.post('/wholesaler-products/set-wholesaler-products-additional-info', authenticate, roleRequired('owner'), makeExpressCallback(
         WholesalerProductController.setAdditionalInfo
     ));
 };

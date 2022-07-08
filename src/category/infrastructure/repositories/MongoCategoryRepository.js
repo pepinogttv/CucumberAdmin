@@ -5,5 +5,5 @@ import { makeDefaultCrudMongoose } from "../../../shared/infrastructure/makeDefa
 export const mongoCategoryRepository = Object.freeze({
     ...makeDefaultCrudMongoose(CategoryModel),
     generateId: () => new mongoose.Types.ObjectId(),
-    getChildsById: (id) => CategoryModel.find({ idsTree: id }),
+    getChilds: (id) => CategoryModel.find({ idsTree: id }),
 })

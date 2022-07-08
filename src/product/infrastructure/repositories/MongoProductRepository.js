@@ -11,7 +11,7 @@ export const mongoProductRepository = {
         return ProductModel.updateOne({ _id: productId }, data, { new: true }).exec()
     },
     getAllByCategoryId(category_id) {
-        return ProductModel.find({ category_id }).exec()
+        return ProductModel.find({ "category._id": category_id }).exec()
     },
     getAllMatchingWholesalerId(wholesaler_id) {
         return ProductModel.find({ wholesaler_id }).exec()

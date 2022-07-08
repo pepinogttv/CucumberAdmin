@@ -18,10 +18,10 @@ export const BrandController = Object.freeze({
         createBrand,
         { brandRepository, storageRepository }
     )(body, file),
-    update: ({ body, file }) => makeUseCase(
+    update: ({ body, file, params: { id } }) => makeUseCase(
         updateBrand,
         { brandRepository, storageRepository }
-    )(body, file),
+    )(id, body, file),
     deleteOne: ({ params }) => makeUseCase(
         deleteBrand,
         { brandRepository, storageRepository }

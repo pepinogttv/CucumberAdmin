@@ -1,8 +1,8 @@
-function calculatePercentOfProfit({ cost, sale, taxs }) {
-    if (!cost || !taxs) return 0
+function calculatePercentOfProfit({ cost, sale, taxs = [] }) {
+    if (!cost) return 0
     const addedTaxes = taxs.reduce((acc, { amount }) => acc + amount, 0);
-    const costWithTax = cost.amount + addedTaxes;
-    return sale - costWithTax / costWithTax
+    const costWithTax = cost + addedTaxes;
+    return (sale - costWithTax) / costWithTax
 }
 export const Product = ({
     name,
@@ -19,14 +19,20 @@ export const Product = ({
     moreInfoUrl,
     ytVideos,
 }, dollar) => {
-    price.sale = price.sale / dollar;
+    price.sale = Number(price.sale) / dollar;
+    price.cost = Number(price.cost) / dollar;
+
     price.percentOfProfit = calculatePercentOfProfit(price)
+
+    console.log({ price })
+
     categoryFeatures = categoryFeatures.filter(({ value }) => !!value)
+    customFeatures = customFeatures.filter(({ value }) => !!value)
 
     return Object.freeze({
-        name,
+        name: name.trim(),
         price,
-        description,
+        description: description.trim(),
         images,
         mainImage,
         brand,

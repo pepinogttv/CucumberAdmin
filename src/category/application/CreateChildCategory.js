@@ -1,7 +1,7 @@
 
 import { Category } from '../domain/CategoryEntity.js';
 
-export function createChildCategory({ categoryRepository }) {
+export function makeCreateChildCategory({ categoryRepository }) {
     return async function (categoryData) {
         const { fatherTree, fatherIdsTree } = categoryData;
 

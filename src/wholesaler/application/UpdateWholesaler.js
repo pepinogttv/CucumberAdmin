@@ -16,7 +16,6 @@ export function updateWholesaler({ wholesalerRepository, storageRepository }) {
 
         wholesaler = Wholesaler(wholesalerData);
         const updated = await wholesalerRepository.update(id, wholesaler, { new: true });
-        console.log({ updated })
 
         return updated
 

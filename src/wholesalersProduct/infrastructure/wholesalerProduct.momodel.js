@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 const WholesalerProductSchema = Schema({
+    code: { type: String, required: true, unique: true },
     wholesaler_id: { type: Schema.Types.ObjectId, ref: 'Wholesaler' },
     name: { type: String, required: true },
     brand: { type: String, required: true },
@@ -16,7 +17,6 @@ const WholesalerProductSchema = Schema({
         amount: { type: Number, required: true },
     }],
     thumb: { type: String, required: true },
-    code: { type: String, required: true, unique: true },
     url: { type: String, required: true },
     mainImage: String,
     images: Array,

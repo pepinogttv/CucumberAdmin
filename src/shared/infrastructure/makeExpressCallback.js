@@ -1,9 +1,13 @@
 import logger from '../../shared/infrastructure/logger.js';
 export default (controller) => (req, res) => {
+    // console.log(req.body);
+
     if (req.body.product) req.body.product = recursiveParse(req.body.product);
     if (req.body.category) req.body.category = recursiveParse(req.body.category);
     if (req.body.wholesaler) req.body.wholesaler = recursiveParse(req.body.wholesaler);
-    logger.info(req.body)
+    if (req.body.brand) req.body.brand = recursiveParse(req.body.brand);
+
+
     const httpRequest = {
         body: req.body,
         files: req.files,
@@ -14,6 +18,7 @@ export default (controller) => (req, res) => {
         method: req.method,
         path: req.path,
         logger: req.logger,
+        user: req.user,
         source: {
             ip: req.ip,
             browser: req.get('User-Agent')

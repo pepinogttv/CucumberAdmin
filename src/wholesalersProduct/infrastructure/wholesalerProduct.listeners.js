@@ -11,6 +11,6 @@ export const listeners = {
     },
     'wholesalerProduct.setAdditionalInfo:end': (socket) => (product) => {
         socket.emit('wholesalerProduct.setAdditionalInfo:end', product);
-    }
+    },
 }
 

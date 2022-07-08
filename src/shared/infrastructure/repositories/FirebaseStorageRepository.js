@@ -23,9 +23,10 @@ export const firebaseStorageRepository = {
             return getDownloadURL(snapshot.ref);
         }))
     },
-    async uploadImage(image, path) {
+    async uploadImage(image, path, name) {
         image = `data:image/png;base64,${image.buffer.toString('base64')}`
-        const storageRef = ref(storage, `${path}/${randomUUID()}`);
+        name = name || randomUUID();
+        const storageRef = ref(storage, `${path}/${name}`);
         const snapshot = await uploadString(storageRef, image, "data_url");
         return getDownloadURL(snapshot.ref);
     },

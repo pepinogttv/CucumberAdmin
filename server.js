@@ -16,8 +16,8 @@ export function Server(port) {
     let httpServer;
     const app = express();
     app.use(cookieParser())
-    app.use(express.json());
-    app.use(express.urlencoded({ extended: true }));
+    app.use(express.urlencoded({ extended: false, limit: "100mb" }));
+    app.use(express.json({ limit: "100mb" }));
     app.use(cors({
         origin: 'http://localhost:8080',
         credentials: true,

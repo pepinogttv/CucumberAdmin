@@ -13,8 +13,7 @@ export const mongoWholesalerProductRepository = Object.freeze({
     async updateMany(products) {
         try {
             for (let product of products) {
-                // await WholesalerProductModel.updateOne({ _id: product._id }, product).exec()
-                await WholesalerProductModel.findByIdAndUpdate(product._id, product).exec()
+                await WholesalerProductModel.findOneAndUpdate({ code: product.code }, product).exec()
             }
         } catch (err) {
             throw new Error('[UpdateMany] Error al actualizar los wholesalerProducts')

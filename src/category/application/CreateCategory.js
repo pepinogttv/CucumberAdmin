@@ -1,7 +1,7 @@
 
 import { Category } from '../domain/CategoryEntity.js';
 
-export function createCategory({ categoryRepository }) {
+export function makeCreateCategory({ categoryRepository }) {
     return async function ({ name, features }) {
         const _id = categoryRepository.generateId();
 

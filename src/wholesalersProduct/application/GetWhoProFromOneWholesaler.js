@@ -12,8 +12,6 @@ export function makeGetWholesalerProductsFromOneWholesaler({ wholesalerProductRe
             product.finalTaxs = taxs * dollar;
         }
 
-        console.log(products[0])
-
         return products
     }
 }
