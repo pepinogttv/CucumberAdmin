@@ -8,9 +8,10 @@ export function makeUpdateWholesalerProducts({ wholesalerProductRepository, whol
         if (updating) return { updating: true }
         else updating = true;
 
+        categories = categories.length ? categories : wholesaler.categories;
+        console.log(categories.length)
         const dollar = await dollarRepository.getOfficialDollar();
         const authState = await wholesalerAuthStateRepository.get(wholesaler);
-        console.log({ authState })
 
         if (wait) {
             const products = await update({
@@ -38,7 +39,7 @@ export function makeUpdateWholesalerProducts({ wholesalerProductRepository, whol
                 authState
             })
                 .then(products => {
-                    wholesalerProductRepository.deleteMany(wholesaler._id)
+                    wholesalerProductRepository.deleteAll(wholesaler._id)
                         .then(() => wholesalerProductRepository.insertMany(products))
                         .then(() => emitter.emit(endEventName, products))
                         .catch(error => emitter.emit(endEventName, { error }))

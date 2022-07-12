@@ -28,6 +28,8 @@ const ProductSchema = Schema({
         name: { type: String, default: 'Cucumber' },
         productPageUrl: String,
         productCode: { type: String, unique: true },
+        images: [String],
+        description: String,
     },
     created: { type: Date, default: Date.now() },
     customFeatures: [String],

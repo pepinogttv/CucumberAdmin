@@ -6,7 +6,6 @@ import fs from 'fs';
 export const playwrightWholesalerAuthStateRepository = Object.freeze({
     async get(wholesaler) {
         const authStatePath = getAuthStatePath(wholesaler)
-        console.log({ isExpired: isExpired(authStatePath) })
         if (isExpired(authStatePath)) {
             await setAuthState(wholesaler, authStatePath)
         }

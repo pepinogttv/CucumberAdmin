@@ -4,32 +4,47 @@ const updatingEventName = 'wholesalerProduct.setAdditionalInfo:updating';
 const endEventName = 'wholesalerProduct.setAdditionalInfo:end';
 
 export function makeSetWholesalerProductsAdditionalInfo({ wholesalerProductRepository, wholesalerProductsGetterRepository, wholesalerAuthStateRepository, emitter }) {
-    return async (wholesaler) => {
+    return async (wholesaler, categories = [], forceReplace) => {
         if (seting) return 'Banca loco, se esta actualizando.'
         seting = true;
 
         const authState = await wholesalerAuthStateRepository.get(wholesaler);
-        const Cookie = authState.getCookie();
+        const cookie = authState.getCookie();
 
-        const products = await wholesalerProductRepository.getAllMatchingWholesalerId(wholesaler._id);
-        if (!products.length) return 'No hay productos para actualizar.'
+        let products = await wholesalerProductRepository.getAllMatchingWholesalerId(wholesaler._id);
 
-        const productsMissingAdditionalInfo = products.filter(missingAdditionaInfo);
-        const productsFull = products.filter(noMissingAdditionalInfo);
+        if (categories.length) {
+            categories = categories.map(({ name }) => name);
+            products = products.filter(product => categories.includes(product.category));
+        }
 
-        set({
+        if (!products.length) return { message: 'No hay productos para actualizar' };
+
+        const productsToUpdate = forceReplace ? products : products.filter(missingAdditionaInfo);
+        console.log({ productsToUpdate: productsToUpdate.length });
+
+        wholesalerProductsGetterRepository.getAdditionalInfo({
             wholesaler,
-            productsMissingAdditionalInfo,
-            productsFull,
-            updateCallback: product => emitter.emit(updatingEventName, product),
-            getAdditionalInfo: wholesalerProductsGetterRepository.getAdditionalInfo,
-            Cookie
+            products: productsToUpdate,
+            cookie,
+            updateCallback: async (additionalInfo, product) => {
+                const { _id, name } = product;
+                console.log({ additionalInfo })
+                const productUpdated = await wholesalerProductRepository.update(_id, additionalInfo)
+                console.log(productUpdated)
+                emitter.emit(updatingEventName, { _id });
+            }
         })
-            .then(readyProducts => {
-                wholesalerProductRepository.updateMany(readyProducts)
-                    .then(() => emitter.emit(endEventName, readyProducts))
-                    .catch(error => emitter.emit(endEventName, { error }))
-                    .finally(() => (seting = false))
+            .then((additionalInfo) => {
+                console.log('THEN')
+                emitter.emit(endEventName, { message: `Se actualizaron ${additionalInfo.length} productos` });
+            })
+            .catch(error => {
+                emitter.emit(endEventName, { error: { description: error.message } });
+            })
+            .finally(() => {
+                console.log('FINALLY')
+                seting = false;
             })
 
         return {
@@ -40,27 +55,9 @@ export function makeSetWholesalerProductsAdditionalInfo({ wholesalerProductRepos
     }
 }
 
-async function set({ wholesaler, productsMissingAdditionalInfo, productsFull, updateCallback, getAdditionalInfo, Cookie }) {
-    return new Promise(async (resolve, reject) => {
-        try {
-            const additionalInfo = await getAdditionalInfo(wholesaler, productsMissingAdditionalInfo, updateCallback, Cookie);
-            const completedMissingProducts = productsMissingAdditionalInfo.map(product => {
-                const additionalInfoForProduct = additionalInfo[product.code];
-                return { ...product, ...additionalInfoForProduct };
-            })
-            const completedProducts = [...productsFull, ...completedMissingProducts];
-            resolve(completedProducts);
-        } catch (error) {
-            reject(error);
-        }
-    })
-
-}
-
 function missingAdditionaInfo(product) {
     return !product.mainImage || !product.images || !product.images.length || !product.description
 }
-
-function noMissingAdditionalInfo(product) {
-    return product.mainImage && product.images && product.images.length && product.description
-}
+// function noMissingAdditionalInfo(product) {
+//     return product.mainImage && product.images && product.images.length && product.description
+// }

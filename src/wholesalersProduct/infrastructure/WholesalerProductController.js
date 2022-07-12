@@ -17,17 +17,17 @@ const wholesalerAuthStateRepository = sharedRepositoryFactory("wholesalerAuthSta
 
 
 //Make uses cases injecting dependencies
-const updateWholesalerProducts = makeUpdateWholesalerProducts({ wholesalerProductRepository, wholesalerProductsGetterRepository, dollarRepository, emitter, wholesalerAuthStateRepository });
-const setWholesalerProductsAdditionalInfo = makeSetWholesalerProductsAdditionalInfo({ wholesalerProductRepository, wholesalerProductsGetterRepository, wholesalerAuthStateRepository, emitter });
-const getWholesalerProductsFromOneWholesaler = makeGetWholesalerProductsFromOneWholesaler({ wholesalerProductRepository, dollarRepository });
-const getWholesalerProducts = makeGetWholesalerProducts({ wholesalerProductsGetterRepository });
-const getWholesalerProduct = makeGetWholesalerProduct({ wholesalerProductRepository, dollarRepository });
+const updateProducts = makeUpdateWholesalerProducts({ wholesalerProductRepository, wholesalerProductsGetterRepository, dollarRepository, emitter, wholesalerAuthStateRepository });
+const setAdditionalInfo = makeSetWholesalerProductsAdditionalInfo({ wholesalerProductRepository, wholesalerProductsGetterRepository, wholesalerAuthStateRepository, emitter });
+const getProductsByWholesaler = makeGetWholesalerProductsFromOneWholesaler({ wholesalerProductRepository, dollarRepository });
+const getProducts = makeGetWholesalerProducts({ wholesalerProductRepository, dollarRepository });
+const getProduct = makeGetWholesalerProduct({ wholesalerProductRepository, dollarRepository });
 
 
 export const WholesalerProductController = Object.freeze({
-    update: ({ body: { wholesaler, categories } }) => updateWholesalerProducts(wholesaler, false, categories),
-    setAdditionalInfo: ({ body: { wholesaler } }) => setWholesalerProductsAdditionalInfo(wholesaler),
-    getAll: getWholesalerProducts,
-    getAllByWholesalerId: ({ params }) => getWholesalerProductsFromOneWholesaler(params.wholesalerId),
-    getOne: ({ params }) => getWholesalerProduct(params.id),
+    update: ({ body: { wholesaler, categories } }) => updateProducts(wholesaler, false, categories),
+    setAdditionalInfo: ({ body: { wholesaler, categories, forceReplace } }) => setAdditionalInfo(wholesaler, categories, forceReplace),
+    getAll: getProducts,
+    getAllByWholesalerId: ({ params }) => getProductsByWholesaler(params.wholesalerId),
+    getOne: ({ params }) => getProduct(params.id),
 })

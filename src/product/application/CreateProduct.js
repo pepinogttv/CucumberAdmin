@@ -4,8 +4,15 @@ import { Product } from '../domain/ProductEntity.js';
 export function makeCreateProduct({ productRepository, storageRepository, dollarRepository, emitter }) {
     return async function (productData, files, user) {
 
-        const dollar = await dollarRepository.getOfficialDollar();
-        const product = Product(productData, dollar);
+        //Cuando se crea el producto hay que descargar las imagenes de proveedor o del helper (SI ES QUE HAY));
+        // const hasDownloadableImages = productData.images.find(image => !image.inlcudes('firebase'));
+
+
+        if (!productData.wholesalerData?.dollarUsed) {
+            productData.dollarUsed = await dollarRepository.getOfficialDollar();
+        }
+
+        const product = Product(productData);
         const productCreated = await productRepository.create(product);
 
         emitter.emit("product.created", {

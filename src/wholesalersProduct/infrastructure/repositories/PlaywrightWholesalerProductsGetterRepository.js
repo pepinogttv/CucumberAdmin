@@ -21,7 +21,7 @@ export const playwrightWholesalerProductsGetterRepository = Object.freeze({
 
         const products = [];
 
-        for (const [i, { url, name }] of Object.entries(categories).slice(0, 1)) {
+        for (const [i, { url, name }] of Object.entries(categories)) {
             const categoryProducts = await solutionBoxGetProducts({
                 page,
                 categoryUrl: url,
@@ -37,7 +37,7 @@ export const playwrightWholesalerProductsGetterRepository = Object.freeze({
         return products;
     },
 
-    async getAdditionalInfo(wholesaler, products, updateCallback, Cookie) {
+    async getAdditionalInfo({ wholesaler, products, updateCallback, cookie: Cookie }) {
         const { homePageUrl } = wholesaler;
         const axiosInstance = axios.create({ headers: { Cookie } })
         const additionalInfo = {};
@@ -46,14 +46,24 @@ export const playwrightWholesalerProductsGetterRepository = Object.freeze({
             const { data } = await axiosInstance.get(url);
             const dom = new JSDOM(data);
             const { document } = dom.window;
+            const hasDescription = document.querySelector(".card-body").innerHTML !== "\n\t\t\t\t\t\t\t\t<div>\n\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t";
             const description = document.querySelector(".card-body").innerHTML;
+
             const imagesElements = document.getElementById("gallery").querySelectorAll("img");
             const images = await checkAndCorrectImages(imagesElements, axiosInstance, homePageUrl);
-            additionalInfo[product.code] = { description, images, mainImage: images[0] };
-            updateCallback(additionalInfo[product.code]);
+            additionalInfo[product.code] = {};
+            console.log({
+                hasDescription,
+                content: document.querySelector(".card-body").textContent
+            })
+            if (hasDescription) additionalInfo[product.code].description = description;
+            if (images.length) {
+                additionalInfo[product.code].images = images;
+                additionalInfo[product.code].mainImage = images[0];
+            }
+            updateCallback(additionalInfo[product.code], product);
         }
-        return additionalInfo;
-
+        return Promise.resolve(additionalInfo);
     }
 })
 
@@ -86,8 +96,4 @@ async function checkAndCorrectImages(imagesElements, instance, homePageUrl) {
         });
     }
     return [...new Set(imagesUrls)];
-}
-
-function getCookieFromCookiesArray(cookies) {
-    return cookies.map(({ name, value }) => `${name}=${value}`).join("; ").trim()
 }

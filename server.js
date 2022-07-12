@@ -19,7 +19,7 @@ export function Server(port) {
     app.use(express.urlencoded({ extended: false, limit: "100mb" }));
     app.use(express.json({ limit: "100mb" }));
     app.use(cors({
-        origin: 'http://localhost:8080',
+        origin: ['http://localhost:8080', "http://localhost:4000"],
         credentials: true,
     }));
 

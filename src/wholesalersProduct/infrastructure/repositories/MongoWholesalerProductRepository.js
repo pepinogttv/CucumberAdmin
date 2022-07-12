@@ -2,13 +2,16 @@ import { WholesalerProductModel } from '../wholesalerProduct.momodel.js';
 
 export const mongoWholesalerProductRepository = Object.freeze({
     getAll() {
-        return WholesalerProductModel.find({}).exec()
+        return WholesalerProductModel.find({}).lean().exec()
     },
     getOneById(id) {
         return WholesalerProductModel.findById(id).exec()
     },
     getAllMatchingWholesalerId(id) {
         return WholesalerProductModel.find({ wholesaler_id: id }).lean().exec()
+    },
+    update(id, data) {
+        return WholesalerProductModel.findByIdAndUpdate({ _id: id }, data, { new: true }).exec();
     },
     async updateMany(products) {
         try {
@@ -28,7 +31,7 @@ export const mongoWholesalerProductRepository = Object.freeze({
             })
         })
     },
-    deleteMany(id) {
+    deleteAll(id) {
         return WholesalerProductModel.deleteMany({ wholesalerId: id }).exec()
     },
 })

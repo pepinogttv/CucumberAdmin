@@ -18,7 +18,8 @@ export const Product = ({
     categoryFeatures,
     moreInfoUrl,
     ytVideos,
-}, dollar) => {
+    dollarUsed: dollar,
+}) => {
     price.sale = Number(price.sale) / dollar;
     price.cost = Number(price.cost) / dollar;
 

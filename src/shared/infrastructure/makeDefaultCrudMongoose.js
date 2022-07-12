@@ -1,6 +1,6 @@
 export const makeDefaultCrudMongoose = (momodel) => Object.freeze({
     getAll() {
-        return momodel.find({}).exec();
+        return momodel.find({}).lean().exec();
     },
     getOneById(id) {
         return momodel.findOne({ _id: id }).exec();

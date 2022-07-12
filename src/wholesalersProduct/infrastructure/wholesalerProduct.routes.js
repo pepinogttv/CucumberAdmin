@@ -17,7 +17,7 @@ export const register = (router) => {
     router.post('/wholesaler-products/update-from-wholesaler', authenticate, roleRequired('owner'), makeExpressCallback(
         WholesalerProductController.update
     ));
-    router.post('/wholesaler-products/set-wholesaler-products-additional-info', authenticate, roleRequired('owner'), makeExpressCallback(
+    router.post('/wholesaler-products/set-additional-info-from-wholesaler', authenticate, roleRequired('owner'), makeExpressCallback(
         WholesalerProductController.setAdditionalInfo
     ));
 };

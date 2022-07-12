@@ -10,5 +10,5 @@ const getProductImages = makeGetProductImages({ productHelperRepository });
 
 export const ProductHelperController = Object.freeze({
     searchProduct: ({ params: { name }, body: { query } }) => searchProduct(name, query),
-    getProductImages: ({ params: { name }, body: { productPageUrl } }) => getProductImages(name, productPageUrl),
+    getImagesFromProductPageUrl: ({ params: { name }, body: { productPageUrl } }) => getProductImages(name, productPageUrl),
 })
