@@ -20,7 +20,7 @@ const WholesalerProductSchema = Schema({
     url: { type: String, required: true },
     mainImage: String,
     images: Array,
-    description: String
-
+    description: String,
+    uploaded: Boolean
 });
 export const WholesalerProductModel = mongoose.model('WholesalerProduct', WholesalerProductSchema);

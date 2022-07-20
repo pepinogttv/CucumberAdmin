@@ -15,13 +15,11 @@ export function makeSyncStockAndPrices({ productRepository, dollarRepository, up
             const wholesalerProduct = indexedWholesalerProducts[product.code];
             product.stock = wholesalerProduct ? wholesalerProduct.stock : 0;
             if (wholesalerProduct) {
-                const { amount, currency } = wholesalerProduct.price.cost;
-                if (currency === 'ARS') {
-                    const dollar = await dollarRepository.getOfficialDollar();
-                    product.price.cost = amount / dollar;
-                } else {
-                    product.price.cost = amount;
-                }
+                const { amount } = wholesalerProduct.price.cost;
+                const taxs = wholesalerProduct.taxs.reduce((acc, tax) => acc + tax.amount, 0)
+                const costWithTaxs = amount + taxs;
+                product.price.cost = costWithTaxs;
+                product.wholesalerData.taxs = wholesalerProduct.taxs;
             }
         }
 

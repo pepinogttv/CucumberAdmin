@@ -1,5 +1,7 @@
 import { emitter } from "../../shared/infrastructure/eventEmitter/index.js";
 
+
+import { makeUpdateOneWholesalerProduct } from "../application/UpdateOneWholesalerProduct.js";
 import { makeUpdateWholesalerProducts } from "../application/UpdateWholesalerProducts.js";
 import { makeSetWholesalerProductsAdditionalInfo } from "../application/SetWholesalerProductsAdditionalInfo.js";
 import { makeGetWholesalerProductsFromOneWholesaler } from "../application/GetWhoProFromOneWholesaler.js";
@@ -16,8 +18,9 @@ const dollarRepository = sharedRepositoryFactory("dollarRepository");
 const wholesalerAuthStateRepository = sharedRepositoryFactory("wholesalerAuthStateRepository");
 
 
-//Make uses cases injecting dependencies
+// Make uses cases injecting dependencies
 const updateProducts = makeUpdateWholesalerProducts({ wholesalerProductRepository, wholesalerProductsGetterRepository, dollarRepository, emitter, wholesalerAuthStateRepository });
+const updateProduct = makeUpdateOneWholesalerProduct({ wholesalerProductRepository });
 const setAdditionalInfo = makeSetWholesalerProductsAdditionalInfo({ wholesalerProductRepository, wholesalerProductsGetterRepository, wholesalerAuthStateRepository, emitter });
 const getProductsByWholesaler = makeGetWholesalerProductsFromOneWholesaler({ wholesalerProductRepository, dollarRepository });
 const getProducts = makeGetWholesalerProducts({ wholesalerProductRepository, dollarRepository });
@@ -25,9 +28,10 @@ const getProduct = makeGetWholesalerProduct({ wholesalerProductRepository, dolla
 
 
 export const WholesalerProductController = Object.freeze({
-    update: ({ body: { wholesaler, categories } }) => updateProducts(wholesaler, false, categories),
-    setAdditionalInfo: ({ body: { wholesaler, categories, forceReplace } }) => setAdditionalInfo(wholesaler, categories, forceReplace),
+    update: ({ wholesaler, categories }) => updateProducts(wholesaler, false, categories),
+    updateOne: ({ productCode, data }) => updateProduct(productCode, data),
+    setAdditionalInfo: ({ wholesaler, categories, forceReplace }) => setAdditionalInfo(wholesaler, categories, forceReplace),
     getAll: getProducts,
-    getAllByWholesalerId: ({ params }) => getProductsByWholesaler(params.wholesalerId),
-    getOne: ({ params }) => getProduct(params.id),
+    getAllByWholesalerId: ({ wholesalerId }) => getProductsByWholesaler(wholesalerId),
+    getOne: ({ id }) => getProduct(id),
 })

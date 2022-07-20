@@ -30,7 +30,7 @@ export function Server(port) {
     const io = createIo(server);
 
     registerRoutes(router, app);
-    // registerEventListener(emitter);
+    registerEventListener(emitter, io);
 
     app.get('/', (req, res) => {
         res.sendFile(path.join(process.cwd(), 'index.html'));
@@ -41,7 +41,6 @@ export function Server(port) {
             return new Promise(resolve => {
                 httpServer = server.listen(port, () => {
                     io.on('connection', socket => {
-                        registerEventListener(emitter, socket);
                         registerWebscoketEvents(socket);
                     })
                     logger.info(`Server listening on port ${port}`);

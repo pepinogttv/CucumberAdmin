@@ -1,4 +1,4 @@
-export function getAdminUsers({ adminUserRepository }) {
+export function makeGetAdminUsers({ adminUserRepository }) {
     return async function () {
         return adminUserRepository.getAll();
     }

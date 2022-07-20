@@ -5,19 +5,23 @@ import { authenticate } from "../../shared/infrastructure/middlewares/auth.js";
 import { roleRequired } from "../../shared/infrastructure/middlewares/roleRequired.js";
 
 export const register = (router) => {
-    router.get('/wholesaler-products', makeExpressCallback(
+    router.get('/wholesaler-products', authenticate, makeExpressCallback(
         WholesalerProductController.getAll
     ))
-    router.get('/wholesaler-products/wholesaler/:wholesalerId', makeExpressCallback(
-        WholesalerProductController.getAllByWholesalerId
+    router.get('/wholesaler-products/wholesaler/:wholesalerId', authenticate, makeExpressCallback(
+        WholesalerProductController.getAllByWholesalerId,
+        ({ body }) => ({ wholesalerId: body.wholesalerId })
     ))
-    router.get('/wholesaler-products/product/:id', makeExpressCallback(
-        WholesalerProductController.getOne
+    router.get('/wholesaler-products/product/:id', authenticate, makeExpressCallback(
+        WholesalerProductController.getOne,
+        ({ params }) => ({ id: params.id })
     ))
     router.post('/wholesaler-products/update-from-wholesaler', authenticate, roleRequired('owner'), makeExpressCallback(
-        WholesalerProductController.update
+        WholesalerProductController.update,
+        ({ body }) => ({ wholesaler: body.wholesaler, categories: body.categories }),
     ));
     router.post('/wholesaler-products/set-additional-info-from-wholesaler', authenticate, roleRequired('owner'), makeExpressCallback(
-        WholesalerProductController.setAdditionalInfo
+        WholesalerProductController.setAdditionalInfo,
+        ({ body }) => ({ wholesaler: body.wholesaler, categories: body.categories, forceReplace: body.forceReplace }),
     ));
 };

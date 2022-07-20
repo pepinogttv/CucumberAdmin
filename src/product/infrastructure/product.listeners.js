@@ -1,11 +1,14 @@
 import { WholesalerProductController } from "../../wholesalersProduct/infrastructure/WholesalerProductController.js";
-import { AdminUserController } from "../../adminUser/infrastructure/AdminUserController.js"
+import { AdminUserController } from "../../adminUser/infrastructure/AdminUserController.js";
 export const listeners = {
-    // 'product.created': (product, user) => {
-    //     AdminUseController.addProductUploaded(user, product);
-    //     WholesalerProductController.update(product.wholesalerData.code, { uploaded: true });
-    // },
-    // 'product.updated': (product) => {
-    //     console.log(`Product updated`);
-    // }
-}
+  "product.created":
+    (io) =>
+    async ({ product, user }) => {
+      // const sockets = await io.fetchSockets();
+      AdminUserController.addProductUploaded({ user, product });
+      WholesalerProductController.updateOne({
+        productCode: product.wholesalerData.productCode,
+        data: { uploaded: true },
+      });
+    },
+};

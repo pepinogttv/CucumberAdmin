@@ -1,28 +1,48 @@
+import { Product } from "../domain/ProductEntity.js";
 
-import { Product } from '../domain/ProductEntity.js';
+export function makeCreateProduct({
+  productRepository,
+  storageRepository,
+  imageDownloader,
+  dollarRepository,
+  emitter,
+}) {
+  return async function x(productData, files, user) {
+    files = files.map(({ buffer }) => buffer);
 
-export function makeCreateProduct({ productRepository, storageRepository, dollarRepository, emitter }) {
-    return async function (productData, files, user) {
-
-        //Cuando se crea el producto hay que descargar las imagenes de proveedor o del helper (SI ES QUE HAY));
-        // const hasDownloadableImages = productData.images.find(image => !image.inlcudes('firebase'));
-
-
-        if (!productData.wholesalerData?.dollarUsed) {
-            productData.dollarUsed = await dollarRepository.getOfficialDollar();
-        }
-
-        const product = Product(productData);
-        const productCreated = await productRepository.create(product);
-
-        emitter.emit("product.created", {
-            product: productCreated,
-            user
-        });
-
-        const imagesUrls = await storageRepository.uploadImages(files, `products/${productCreated._id}`);
-        await productRepository.updateImages(productCreated._id, imagesUrls);
-        if (imagesUrls) productCreated.images = imagesUrls;
-        return productCreated;
+    // Cuando se crea el producto hay que descargar las imagenes de proveedor o del helper (SI ES QUE HAY));
+    const hasDownloadableImages = productData.images.find(
+      (image) => !String(image).includes("firebase")
+    );
+    if (hasDownloadableImages) {
+      const images = await imageDownloader.downloadBuffersFromUrls(
+        productData.images
+      );
+      productData.images = images;
     }
+
+    if (!productData.wholesalerData?.dollarUsed) {
+      productData.dollarUsed = await dollarRepository.getOfficialDollar();
+    }
+
+    try {
+      const id = await productRepository.generateId();
+      productData.images = await storageRepository.uploadImages(
+        [...files, ...productData.images],
+        `products/${id}`
+      );
+      productData.id = id;
+      const product = Product(productData);
+      const productCreated = await productRepository.create(product);
+
+      emitter.emit("product.created", {
+        product: productCreated,
+        user,
+      });
+      return productCreated;
+    } catch (err) {
+      if (err.code === 11000) throw new Error("El producto ya existe");
+      else throw new Error(err);
+    }
+  };
 }

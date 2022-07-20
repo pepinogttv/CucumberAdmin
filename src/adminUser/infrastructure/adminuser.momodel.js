@@ -8,5 +8,6 @@ const AdminUserSchema = Schema({
     createdAt: { type: Date, default: Date.now },
     productsUploaded: [{ type: Schema.Types.ObjectId, ref: 'Product' }],
     productsPendingPayment: [{ type: Schema.Types.ObjectId, ref: 'Product' }],
+    totalEarning: { type: Number, default: 0 },
 });
 export const AdminUserModel = mongoose.model('AdminUser', AdminUserSchema);

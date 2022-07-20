@@ -1,99 +1,132 @@
-import { WholesalerProduct } from "../domain/WholesalerProductEntity.js"
+import { WholesalerProduct } from "../domain/WholesalerProductEntity.js";
+
 let updating = false;
-const updatingEventName = 'wholesalerProduct.update:updating';
-const endEventName = 'wholesalerProduct.update:end';
+const updatingEventName = "wholesalerProduct.update:updating";
+const endEventName = "wholesalerProduct.update:end";
 
-export function makeUpdateWholesalerProducts({ wholesalerProductRepository, wholesalerProductsGetterRepository, dollarRepository, emitter, wholesalerAuthStateRepository }) {
-    return async (wholesaler, wait, categories) => {
-        if (updating) return { updating: true }
-        else updating = true;
+export function makeUpdateWholesalerProducts({
+  wholesalerProductRepository,
+  wholesalerProductsGetterRepository,
+  dollarRepository,
+  emitter,
+  wholesalerAuthStateRepository,
+}) {
+  return async (wholesaler, wait, categories) => {
+    if (updating) return { updating: true };
+    updating = true;
 
-        categories = categories.length ? categories : wholesaler.categories;
-        console.log(categories.length)
-        const dollar = await dollarRepository.getOfficialDollar();
-        const authState = await wholesalerAuthStateRepository.get(wholesaler);
+    categories = categories.length ? categories : wholesaler.categories;
+    const dollar = await dollarRepository.getOfficialDollar();
+    const authState = await wholesalerAuthStateRepository.get(wholesaler);
 
-        if (wait) {
-            const products = await update({
-                wholesaler,
-                dollar,
-                getProducts: wholesalerProductsGetterRepository.getAll,
-                getOldProducts: () => wholesalerProductRepository.getAllMatchingWholesalerId(wholesaler._id),
-                updateCallback: product => emitter.emit(updatingEventName, product),
-                categories,
-                authState
-            })
-            await wholesalerProductRepository.deleteMany(wholesaler._id)
-                .then(() => wholesalerProductRepository.insertMany(products))
-                .then(() => emitter.emit(endEventName, products))
-                .catch(error => emitter.emit(endEventName, { error }))
-                .finally(() => (updating = false))
-        } else {
-            update({
-                wholesaler,
-                dollar,
-                getProducts: wholesalerProductsGetterRepository.getAll,
-                getOldProducts: () => wholesalerProductRepository.getAllMatchingWholesalerId(wholesaler._id),
-                updateCallback: product => emitter.emit(updatingEventName, product),
-                categories,
-                authState
-            })
-                .then(products => {
-                    wholesalerProductRepository.deleteAll(wholesaler._id)
-                        .then(() => wholesalerProductRepository.insertMany(products))
-                        .then(() => emitter.emit(endEventName, products))
-                        .catch(error => emitter.emit(endEventName, { error }))
-                        .finally(() => (updating = false))
-                })
-        }
-
-        return {
-            message: `Actualizando productos de ${wholesaler.name}`,
-            updatingEventName,
-            endEventName
-        }
+    if (wait) {
+      const products = await update({
+        wholesaler,
+        dollar,
+        getProducts: wholesalerProductsGetterRepository.getAll,
+        getOldProducts: () =>
+          wholesalerProductRepository.getAllMatchingWholesalerId(
+            wholesaler._id
+          ),
+        updateCallback: (product) => emitter.emit(updatingEventName, product),
+        categories,
+        authState,
+      });
+      await wholesalerProductRepository
+        .deleteMany(wholesaler._id)
+        .then(() => wholesalerProductRepository.insertMany(products))
+        .then(() => emitter.emit(endEventName, products))
+        .catch((error) => emitter.emit(endEventName, { error }))
+        .finally(() => {
+          updating = false;
+        });
+    } else {
+      update({
+        wholesaler,
+        dollar,
+        getProducts: wholesalerProductsGetterRepository.getAll,
+        getOldProducts: () =>
+          wholesalerProductRepository.getAllMatchingWholesalerId(
+            wholesaler._id
+          ),
+        updateCallback: (product) => emitter.emit(updatingEventName, product),
+        categories,
+        authState,
+      }).then((products) => {
+        wholesalerProductRepository
+          .deleteAll(wholesaler._id)
+          .then(() => wholesalerProductRepository.insertMany(products))
+          .then(() => emitter.emit(endEventName, products))
+          .catch((error) => emitter.emit(endEventName, { error }))
+          .finally(() => {
+            updating = false;
+          });
+      });
     }
+
+    return {
+      message: `Actualizando productos de ${wholesaler.name}`,
+      updatingEventName,
+      endEventName,
+    };
+  };
 }
 
-async function update({ wholesaler, dollar, getProducts, getOldProducts, updateCallback, categories, authState }) {
-    return new Promise((resolve, reject) => {
-        getProducts(wholesaler, categories, updateCallback, authState)
-            .then(products => products.map(product => WholesalerProduct({ ...product, wholesaler_id: wholesaler._id }, dollar)))
-            .then(async products => {
-                const oldProducts = await getOldProducts();
-                console.log({ oldProductsLenght: oldProducts.length })
-                if (oldProducts.length) {
-                    const indexedNewProducts = indexProductsByProp(products, 'code');
-                    return resolve(rescueAdditionalInfo(products, oldProducts, indexedNewProducts))
-                }
-                resolve(products);
-            })
-            .catch(reject);
-    })
+async function update({
+  wholesaler,
+  dollar,
+  getProducts,
+  getOldProducts,
+  updateCallback,
+  categories,
+  authState,
+}) {
+  return new Promise((resolve, reject) => {
+    getProducts(wholesaler, categories, updateCallback, authState)
+      .then((products) =>
+        products.map((product) =>
+          WholesalerProduct(
+            { ...product, wholesaler_id: wholesaler._id },
+            dollar
+          )
+        )
+      )
+      .then(async (products) => {
+        const oldProducts = await getOldProducts();
+        if (oldProducts.length) {
+          const indexedNewProducts = indexProductsByProp(products, "code");
+          return resolve(
+            rescueAdditionalInfo(products, oldProducts, indexedNewProducts)
+          );
+        }
+        resolve(products);
+      })
+      .catch(reject);
+  });
 }
 
 function rescueAdditionalInfo(products, oldProducts, indexedNewProducts) {
-    console.log({ products: products.length, oldProducts: oldProducts.length })
-    oldProducts.forEach(oldProduct => {
-        const newProduct = indexedNewProducts[oldProduct.code];
-        if (newProduct) {
-            const { images, mainImage, description, uploaded } = oldProduct || {};
-            if (images) newProduct.images = images;
-            if (mainImage) newProduct.mainImage = mainImage;
-            if (description) newProduct.description = description;
-            if (uploaded) newProduct.uploaded = uploaded;
-        } else {
-            oldProduct.stock = 0;
-            products.push(oldProduct);
-        }
-    })
-    console.log({ pushedProducts: products.length })
-    return products;
+  oldProducts.forEach((oldProduct) => {
+    const newProduct = indexedNewProducts[oldProduct.code];
+    if (newProduct) {
+      const { images, mainImage, description, uploaded } = oldProduct || {};
+      if (images) newProduct.images = images;
+      if (mainImage) newProduct.mainImage = mainImage;
+      if (description) newProduct.description = description;
+      if (uploaded) newProduct.uploaded = uploaded;
+    } else {
+      oldProduct.stock = 0;
+      products.push(oldProduct);
+    }
+  });
+  return products;
 }
 function indexProductsByProp(products, prop) {
-    return products.reduce((acc, product) => ({
-        ...acc,
-        [product[prop]]: product
-    }), {});
-
+  return products.reduce(
+    (acc, product) => ({
+      ...acc,
+      [product[prop]]: product,
+    }),
+    {}
+  );
 }

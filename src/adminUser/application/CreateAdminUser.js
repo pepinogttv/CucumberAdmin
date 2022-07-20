@@ -1,4 +1,4 @@
-export function createAdminUser({ adminUserRepository, passwordEncrypter, tokenGenerator }) {
+export function makeCreateAdminUser({ adminUserRepository, passwordEncrypter, tokenGenerator }) {
     return async function (username, password) {
         if (!username || !password) throw new Error("username and password are required");
         const user = await adminUserRepository.getByUsername(username);

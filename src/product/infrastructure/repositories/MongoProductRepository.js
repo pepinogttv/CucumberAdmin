@@ -18,7 +18,7 @@ export const mongoProductRepository = {
     },
     async updateMany(products) {
         try {
-            for (let product of products) {
+            for (const product of products) {
                 await ProductModel.findByIdAndUpdate(product._id, product).exec()
             }
         } catch (err) {

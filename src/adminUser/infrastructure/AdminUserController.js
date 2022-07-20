@@ -1,23 +1,26 @@
-import makeUseCase from "../../shared/application/MakeUseCase.js"
 
-import { createAdminUser } from "../application/CreateAdminUser.js";
-import { loginAdminUser } from "../application/LoginAdminUser.js";
-import { getAdminUsers } from "../application/GetAdminUsers.js";
-
+import { makeCreateAdminUser } from "../application/CreateAdminUser.js";
+import { makeLoginAdminUser } from "../application/LoginAdminUser.js";
+import { makeGetAdminUsers } from "../application/GetAdminUsers.js";
+import { makeAddProductUploaded } from "../application/AddProductUploaded.js";
+import { makeGetAdminUser } from "../application/GetAdminUser.js"
 import { tokenGenerator } from "./tokenGenerator.js";
 import { passwordEncrypter } from "./passwordEncrypter.js";
 
 import { repositoryFactory } from "./repositories/factory.js";
 const adminUserRepository = repositoryFactory("adminUserRepository");
 
+const createAdminUser = makeCreateAdminUser({ adminUserRepository, passwordEncrypter, tokenGenerator });
+const loginAdminUser = makeLoginAdminUser({ adminUserRepository, passwordEncrypter, tokenGenerator });
+const getAdminUsers = makeGetAdminUsers({ adminUserRepository });
+const getAdminUser = makeGetAdminUser({ adminUserRepository });
+const addProductUploaded = makeAddProductUploaded({ adminUserRepository });
+
+
 export const AdminUserController = Object.freeze({
-    create: ({ body: { username, password } }) => makeUseCase(
-        createAdminUser,
-        { adminUserRepository, passwordEncrypter, tokenGenerator }
-    )(username, password),
-    login: ({ body: { username, password } }) => makeUseCase(
-        loginAdminUser,
-        { adminUserRepository, passwordEncrypter, tokenGenerator }
-    )(username, password),
-    getAll: () => makeUseCase(getAdminUsers, { adminUserRepository })()
+    create: ({ username, password }) => createAdminUser(username, password),
+    login: ({ username, password }) => loginAdminUser(username, password),
+    getAll: getAdminUsers,
+    addProductUploaded: ({ user, product }) => addProductUploaded(user, product),
+    getOne: ({ id }) => getAdminUser(id)
 })

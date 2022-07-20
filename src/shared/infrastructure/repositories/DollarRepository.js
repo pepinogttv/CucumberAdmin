@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { xml2js } from "xml-js"
 
-let cachedDollar = {
+const cachedDollar = {
     value: null,
     expiredAt: null
 };

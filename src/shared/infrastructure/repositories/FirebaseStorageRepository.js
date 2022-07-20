@@ -16,7 +16,7 @@ const storage = getStorage();
 
 export const firebaseStorageRepository = {
     uploadImages(images, path) {
-        images = images.map(({ buffer }) => `data:image/png;base64,${buffer.toString('base64')}`);
+        images = images.map(buffer => `data:image/png;base64,${buffer.toString('base64')}`);
         return Promise.all(images.map(async image => {
             const storageRef = ref(storage, `${path}/${randomUUID()}`);
             const snapshot = await uploadString(storageRef, image, "data_url");

@@ -1,4 +1,4 @@
-export function getBrands({ brandRepository }) {
+export function makeGetBrands({ brandRepository }) {
     return async () => {
         return brandRepository.getAll()
     }

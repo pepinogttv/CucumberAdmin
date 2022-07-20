@@ -1,12 +1,11 @@
 import logger from '../../shared/infrastructure/logger.js';
-export default (controller) => (req, res) => {
+export default (controller, paramsBuilder) => (req, res) => {
     // console.log(req.body);
 
     if (req.body.product) req.body.product = recursiveParse(req.body.product);
     if (req.body.category) req.body.category = recursiveParse(req.body.category);
     if (req.body.wholesaler) req.body.wholesaler = recursiveParse(req.body.wholesaler);
     if (req.body.brand) req.body.brand = recursiveParse(req.body.brand);
-
 
     const httpRequest = {
         body: req.body,
@@ -29,8 +28,8 @@ export default (controller) => (req, res) => {
             'User-Agent': req.get('User-Agent')
         }
     };
-
-    controller(httpRequest)
+    const params = paramsBuilder ? paramsBuilder(httpRequest) : httpRequest;
+    controller(params)
         .then((httpResponse) => {
             if (httpResponse) {
                 const { token, user } = httpResponse;

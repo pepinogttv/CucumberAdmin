@@ -1,7 +1,7 @@
 import { AdminUserModel } from "../adminuser.momodel.js"
 
 export const mongoAdminUserRepository = Object.freeze({
-    getById: (_id) => AdminUserModel.findById(_id).exec(),
+    getOneById: (_id) => AdminUserModel.findById(_id).exec(),
     getByUsername: (username) => AdminUserModel.findOne({ username }).exec(),
     getAll: () => AdminUserModel.find().exec(),
     create: (adminUser) => new Promise((resolve, reject) => {
@@ -10,6 +10,11 @@ export const mongoAdminUserRepository = Object.freeze({
             resolve(created);
         })
     }),
+    addProductUploaded: (adminUser, product) => {
+        return AdminUserModel.updateOne({ _id: adminUser._id },
+            { $push: { productsUploaded: product._id, productsPendingPayment: product._id } }
+        ).exec()
+    }
 })
 
 

@@ -10,12 +10,16 @@ export const mongoWholesalerProductRepository = Object.freeze({
     getAllMatchingWholesalerId(id) {
         return WholesalerProductModel.find({ wholesaler_id: id }).lean().exec()
     },
-    update(id, data) {
-        return WholesalerProductModel.findByIdAndUpdate({ _id: id }, data, { new: true }).exec();
+    update(_id, data) {
+        return WholesalerProductModel.findByIdAndUpdate({ _id }, data, { new: true }).exec();
+    },
+    updateByCode(code, data) {
+        console.log({ code, data })
+        return WholesalerProductModel.findOneAndUpdate({ code }, data, { new: true }).exec();
     },
     async updateMany(products) {
         try {
-            for (let product of products) {
+            for (const product of products) {
                 await WholesalerProductModel.findOneAndUpdate({ code: product.code }, product).exec()
             }
         } catch (err) {

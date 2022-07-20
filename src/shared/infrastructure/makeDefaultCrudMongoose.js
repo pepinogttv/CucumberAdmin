@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 export const makeDefaultCrudMongoose = (momodel) => Object.freeze({
     getAll() {
         return momodel.find({}).lean().exec();
@@ -18,5 +19,6 @@ export const makeDefaultCrudMongoose = (momodel) => Object.freeze({
     },
     update(id, data) {
         return momodel.findByIdAndUpdate({ _id: id }, data, { new: false }).exec();
-    }
+    },
+    generateId: () => new mongoose.Types.ObjectId(),
 }) 

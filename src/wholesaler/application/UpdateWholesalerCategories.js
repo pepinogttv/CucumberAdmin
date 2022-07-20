@@ -1,4 +1,4 @@
-export function updateWholesalerCategories({ wholesalerRepository, wholesalerCategoriesGetterRepository }) {
+export function makeUpdateWholesalerCategories({ wholesalerRepository, wholesalerCategoriesGetterRepository }) {
     return async (wholesaler) => {
         const categories = await wholesalerCategoriesGetterRepository.getCategories(wholesaler);
         const res = wholesalerRepository.updateCategories(wholesaler._id, categories);

@@ -4,6 +4,7 @@ export function makeGetWholesalerProducts({ wholesalerProductRepository, dollarR
         const dollar = await dollarRepository.getOfficialDollar()
 
         for (const product of products) {
+            product.taxs = convertTaxsToDollar(product.taxs, dollar)
             const taxs = product.taxs.reduce((acc, tax) => acc + tax.amount, 0)
             const total = product.price.amount + taxs;
 
@@ -14,4 +15,16 @@ export function makeGetWholesalerProducts({ wholesalerProductRepository, dollarR
 
         return products
     }
+}
+function convertTaxsToDollar(taxs, dollar) {
+    return taxs.map(({ amount, currency, name }) => {
+        if (currency === 'ARS') {
+            return {
+                amount: Number(amount) / dollar,
+                currency: 'USD',
+                name
+            }
+        }
+        return { amount, currency, name }
+    })
 }

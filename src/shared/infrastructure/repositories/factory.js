@@ -3,7 +3,7 @@ import { firebaseStorageRepository } from './FirebaseStorageRepository.js';
 import { playwrightWholesalerAuthStateRepository } from './PlaywrightWholesalerAuthStateRepository.js'
 
 const repositories = {
-    dollarRepository: dollarRepository,
+    dollarRepository,
     storageRepository: firebaseStorageRepository,
     wholesalerAuthStateRepository: playwrightWholesalerAuthStateRepository
 }

@@ -1,4 +1,3 @@
-import makeUseCase from "../../shared/application/MakeUseCase.js"
 
 import { makeCreateCategory } from "../application/CreateCategory.js"
 import { makeUpdateCategory } from "../application/UpdateCategory.js"

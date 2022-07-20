@@ -1,6 +1,7 @@
 
 export const listeners = {
-    'wholesalerProduct.update:updating': (socket) => (product) => {
+    'wholesalerProduct.update:updating': (io) => async (product) => {
+        const socket = (await io.fetchSockets())[0]
         socket.emit('wholesalerProduct.update:updating', product);
     },
     'wholesalerProduct.update:end': (socket) => (products) => {

@@ -12,7 +12,7 @@ const helpres = {
             const page = await browser.newPage();
             await page.goto(`https://listado.mercadolibre.com.ar/${productName}`);
 
-            let mlProducts = [];
+            const mlProducts = [];
 
             const products = await page.$$("li.ui-search-layout__item");
 

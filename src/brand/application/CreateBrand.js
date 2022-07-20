@@ -1,7 +1,5 @@
 
-// import { Product } from '../domain/ProductEntity.js';
-
-export function createBrand({ brandRepository, storageRepository }) {
+export function makeCreateBrand({ brandRepository, storageRepository }) {
     return async function ({ name }, file) {
 
         if (!name || !file) throw new Error("Complete all fields");
